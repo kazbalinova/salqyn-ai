@@ -1,0 +1,1622 @@
+<!doctype html>
+<html lang="kk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Салқын AI</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Noto+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout: consumer appliance brand site. Sticky header, hash-routed views (home, models, panel, signup, account), animated fridge hero. */
+:root {
+  --bg: #F3F9F7;
+  --surface: #FFFFFF;
+  --surface2: #E8F3F0;
+  --fg: #0F2B2A;
+  --muted: #4A6663;
+  --line: #D3E4E0;
+  --brand: #0A7F6B;
+  --brand-ink: #FFFFFF;
+  --brand-soft: #DDF3EC;
+  --blue: #2370C2;
+  --ok: #14804A;
+  --warn: #9A5B08;
+  --bad: #C23B2E;
+  --shadow: 0 10px 30px rgba(15, 43, 42, 0.10);
+  --font-display: "Montserrat", "Noto Sans", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  --font-body: "Noto Sans", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #08191A; --surface: #0F2527; --surface2: #14302F; --fg: #E6F4F1; --muted: #9BBDB8; --line: #21413F;
+    --brand: #3DD6B5; --brand-ink: #04211C; --brand-soft: #123B36; --blue: #7DBBFF;
+    --ok: #5FD38D; --warn: #E6B655; --bad: #FF8A78; --shadow: 0 10px 30px rgba(0, 0, 0, 0.35); color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #08191A; --surface: #0F2527; --surface2: #14302F; --fg: #E6F4F1; --muted: #9BBDB8; --line: #21413F;
+  --brand: #3DD6B5; --brand-ink: #04211C; --brand-soft: #123B36; --blue: #7DBBFF;
+  --ok: #5FD38D; --warn: #E6B655; --bad: #FF8A78; --shadow: 0 10px 30px rgba(0, 0, 0, 0.35); color-scheme: dark;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html { scroll-behavior: smooth; scroll-padding-top: 120px; }
+body {
+  background: var(--bg); color: var(--fg);
+  font-family: var(--font-body); font-size: 17px; line-height: 1.65;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 0; overflow-x: hidden;
+}
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 40; background: var(--bg); }
+.wrap { max-width: 1160px; margin: 0 auto; }
+h1, h2, h3 { font-family: var(--font-display); margin: 0; text-wrap: balance; line-height: 1.15; letter-spacing: -0.01em; }
+h1 { font-size: clamp(2.1rem, 5.6vw, 3.7rem); font-weight: 800; }
+h2 { font-size: clamp(1.7rem, 3.8vw, 2.5rem); font-weight: 800; }
+h3 { font-size: 1.15rem; font-weight: 700; }
+p { margin: 0; }
+a { color: var(--brand); }
+.num { font-variant-numeric: tabular-nums; }
+:focus-visible { outline: 3px solid var(--blue); outline-offset: 2px; border-radius: 6px; }
+
+/* header */
+.top { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 30; background: color-mix(in srgb, var(--bg) 92%, transparent); backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); }
+.top .wrap { display: flex; align-items: center; gap: 14px; padding-block: 10px; flex-wrap: wrap; }
+.brand { font-family: var(--font-display); font-weight: 800; font-size: 1.3rem; text-decoration: none; color: var(--fg); display: flex; align-items: center; gap: 10px; }
+.logo { width: 34px; height: 34px; border-radius: 10px; background: linear-gradient(135deg, var(--brand), var(--blue)); display: grid; place-items: center; }
+.logo svg { width: 20px; height: 20px; }
+nav { display: flex; gap: 4px; margin-left: 24px; }
+nav a { text-decoration: none; color: var(--muted); font-weight: 600; font-size: 0.98rem; padding: 8px 14px; border-radius: 10px; }
+nav a:hover { background: var(--surface2); color: var(--fg); }
+nav a[aria-current="page"] { background: var(--brand-soft); color: var(--brand); }
+.top-right { margin-left: auto; display: flex; gap: 10px; align-items: center; }
+.btn { font: inherit; font-weight: 600; font-size: 1rem; min-height: 46px; padding: 0 22px; border-radius: 12px; border: 2px solid transparent; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; transition: transform .18s ease, box-shadow .18s ease, background .18s ease; }
+.btn:hover { transform: translateY(-2px); }
+.btn.primary { background: var(--brand); color: var(--brand-ink); box-shadow: 0 8px 20px color-mix(in srgb, var(--brand) 35%, transparent); }
+.btn.ghost { background: transparent; color: var(--fg); border-color: var(--line); }
+.btn.ghost:hover { border-color: var(--brand); }
+.btn.sm { min-height: 40px; padding: 0 16px; font-size: 0.93rem; }
+.icon-btn { width: 44px; min-height: 44px; padding: 0; }
+
+/* views */
+.view { animation: viewIn .5s ease both; }
+@keyframes viewIn { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+section { padding-block: clamp(44px, 7vw, 88px); }
+.sec-head { max-width: 62ch; display: grid; gap: 12px; margin-bottom: 36px; }
+.sec-head p { color: var(--muted); font-size: 1.05rem; }
+.kicker { font-family: var(--font-display); font-weight: 700; font-size: 0.82rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--brand); }
+.rv { transform: translateY(26px); transition: transform .7s cubic-bezier(.2,.7,.2,1); }
+.rv.in { transform: none; }
+
+/* hero */
+.hero { position: relative; padding-block: clamp(36px, 6vw, 80px) clamp(40px, 6vw, 72px); display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: clamp(24px, 5vw, 56px); align-items: center; }
+.hero::before { content: ""; position: absolute; inset: -40px 0 auto 0; height: 130%; background: radial-gradient(ellipse 50% 55% at 75% 40%, color-mix(in srgb, var(--brand) 22%, transparent), transparent 70%), radial-gradient(ellipse 40% 45% at 15% 20%, color-mix(in srgb, var(--blue) 14%, transparent), transparent 70%); z-index: -1; pointer-events: none; }
+.hero .lead { margin-top: 20px; font-size: 1.15rem; color: var(--muted); max-width: 52ch; }
+.hero-cta { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 28px; }
+.badges { display: flex; gap: 8px 18px; flex-wrap: wrap; margin-top: 28px; color: var(--muted); font-size: 0.93rem; font-weight: 500; }
+.badges span::before { content: "✓ "; color: var(--brand); font-weight: 700; }
+.scene { position: relative; display: grid; place-items: center; min-height: 460px; }
+.scene svg.fr { width: min(100%, 330px); height: auto; filter: drop-shadow(0 28px 30px rgba(15, 43, 42, 0.25)); animation: bob 6s ease-in-out infinite; }
+@keyframes bob { 50% { transform: translateY(-8px); } }
+.door { transform-box: fill-box; transform-origin: left center; animation: door 10s ease-in-out infinite; }
+@keyframes door { 0%, 12% { transform: none; } 28%, 62% { transform: scaleX(0.16) skewY(-4deg); } 80%, 100% { transform: none; } }
+.chip { position: absolute; background: var(--surface); border: 1px solid var(--line); box-shadow: var(--shadow); border-radius: 14px; padding: 10px 14px; font-size: 0.9rem; font-weight: 600; display: flex; align-items: center; gap: 8px; animation: floaty 5s ease-in-out infinite; }
+.chip i { width: 10px; height: 10px; border-radius: 50%; background: var(--ok); flex: none; }
+.chip.w i { background: var(--warn); } .chip.b i { background: var(--blue); } .chip.g i { background: var(--brand); }
+.c1 { top: 8%; left: 0; } .c2 { top: 30%; right: 0; animation-delay: -1.5s; } .c3 { bottom: 24%; left: 0; animation-delay: -3s; } .c4 { bottom: 6%; right: 4%; animation-delay: -2.2s; }
+@keyframes floaty { 50% { transform: translateY(-10px); } }
+
+/* stats */
+.stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; padding-block: 0 clamp(30px, 5vw, 56px); }
+.stat { background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 22px; }
+.stat b { display: block; white-space: nowrap; font-family: var(--font-display); font-size: clamp(1.5rem, 2.6vw, 1.95rem); font-weight: 800; color: var(--brand); line-height: 1.1; }
+.stat span { color: var(--muted); font-size: 0.95rem; }
+
+/* features */
+.grid3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 20px; padding: 24px; transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease; min-width: 0; }
+.card:hover { transform: translateY(-5px); box-shadow: var(--shadow); border-color: color-mix(in srgb, var(--brand) 50%, var(--line)); }
+.feat .ic { width: 52px; height: 52px; border-radius: 14px; background: var(--brand-soft); display: grid; place-items: center; margin-bottom: 16px; color: var(--brand); }
+.feat .ic svg { width: 28px; height: 28px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.feat p { color: var(--muted); font-size: 0.97rem; margin-top: 8px; }
+.tag { display: inline-block; margin-top: 14px; font-size: 0.78rem; font-weight: 700; padding: 3px 10px; border-radius: 99px; }
+.tag.now { background: var(--brand-soft); color: var(--ok); }
+.tag.soon { background: var(--surface2); color: var(--warn); }
+
+/* steps */
+.steps { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 18px; counter-reset: s; list-style: none; padding: 0; margin: 0; }
+.steps li { counter-increment: s; position: relative; padding-top: 58px; }
+.steps li::before { content: counter(s); position: absolute; top: 0; left: 0; width: 44px; height: 44px; border-radius: 50%; background: var(--brand); color: var(--brand-ink); display: grid; place-items: center; font-family: var(--font-display); font-weight: 800; }
+.steps li::after { content: ""; position: absolute; top: 21px; left: 56px; right: 8px; height: 2px; background: repeating-linear-gradient(90deg, var(--line) 0 6px, transparent 6px 12px); }
+.steps li:last-child::after { display: none; }
+.steps p { color: var(--muted); font-size: 0.97rem; margin-top: 6px; }
+
+/* compare */
+.table-scroll { overflow-x: auto; border: 1px solid var(--line); border-radius: 18px; background: var(--surface); }
+table { border-collapse: collapse; width: 100%; min-width: 560px; }
+th, td { text-align: left; padding: 14px 18px; border-bottom: 1px solid var(--line); font-size: 0.98rem; vertical-align: middle; }
+th { font-family: var(--font-display); font-size: 0.9rem; color: var(--muted); font-weight: 700; background: var(--surface2); }
+tr:last-child td { border-bottom: 0; }
+td.good { color: var(--ok); font-weight: 600; }
+td.old { color: var(--muted); }
+
+/* calculator */
+.calc { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 22px; }
+.result { background: linear-gradient(145deg, var(--brand), color-mix(in srgb, var(--brand) 55%, var(--blue))); color: #fff; border-radius: 22px; padding: 28px; display: grid; gap: 14px; align-content: center; }
+.result .big { font-family: var(--font-display); font-size: clamp(2rem, 4.5vw, 3rem); font-weight: 800; line-height: 1.1; }
+.result small { opacity: 0.9; font-size: 0.9rem; }
+.result .line { display: flex; justify-content: space-between; gap: 12px; border-top: 1px solid rgba(255,255,255,.3); padding-top: 12px; font-weight: 600; }
+
+/* faq */
+details { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 0 20px; }
+details + details { margin-top: 12px; }
+summary { cursor: pointer; font-weight: 600; padding: 18px 0; list-style: none; display: flex; justify-content: space-between; gap: 12px; align-items: center; }
+summary::-webkit-details-marker { display: none; }
+summary::after { content: "+"; font-size: 1.5rem; color: var(--brand); transition: transform .25s; }
+details[open] summary::after { transform: rotate(45deg); }
+details p { color: var(--muted); padding-bottom: 18px; }
+.cta-band { background: linear-gradient(135deg, var(--brand), color-mix(in srgb, var(--brand) 50%, var(--blue))); color: #fff; border-radius: 28px; padding: clamp(28px, 5vw, 56px); display: flex; gap: 24px; align-items: center; justify-content: space-between; flex-wrap: wrap; }
+.cta-band h2 { max-width: 20ch; }
+.cta-band .btn { background: #fff; color: #0A5C4D; }
+
+/* forms */
+.field { display: grid; gap: 6px; min-width: 0; }
+.field label, .legend { font-weight: 600; font-size: 0.95rem; }
+.field .hint { color: var(--muted); font-size: 0.85rem; }
+input[type="text"], input[type="email"], input[type="password"], input[type="tel"], select {
+  font: inherit; font-size: 1rem; width: 100%; min-height: 50px; padding: 0 14px; border-radius: 12px; border: 2px solid var(--line); background: var(--surface); color: var(--fg);
+}
+input:hover, select:hover { border-color: color-mix(in srgb, var(--brand) 50%, var(--line)); }
+input:focus, select:focus { outline: none; border-color: var(--brand); box-shadow: 0 0 0 4px color-mix(in srgb, var(--brand) 22%, transparent); }
+input[aria-invalid="true"], select[aria-invalid="true"] { border-color: var(--bad); }
+input.ok-f { border-color: var(--ok); }
+.err { min-height: 1.3em; font-size: 0.86rem; color: var(--bad); font-weight: 500; }
+.err.note { color: var(--warn); }
+.row2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px 18px; }
+.row3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px 18px; }
+.phone { display: grid; grid-template-columns: auto minmax(0, 1fr); }
+.phone span { display: grid; place-items: center; padding: 0 14px; border: 2px solid var(--line); border-right: 0; border-radius: 12px 0 0 12px; background: var(--surface2); font-weight: 600; }
+.phone input { border-radius: 0 12px 12px 0; }
+.pwbox { position: relative; }
+.pwbox input { padding-right: 90px; }
+.pwbox button { position: absolute; right: 6px; top: 6px; height: 38px; border: 0; background: var(--surface2); color: var(--fg); border-radius: 8px; padding: 0 12px; cursor: pointer; font: inherit; font-size: 0.85rem; font-weight: 600; }
+.meter { height: 6px; border-radius: 4px; background: var(--surface2); overflow: hidden; }
+.meter i { display: block; height: 100%; width: 0; background: var(--bad); transition: width .3s, background .3s; }
+.signup { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: 28px; align-items: start; }
+.formcard { background: var(--surface); border: 1px solid var(--line); border-radius: 24px; padding: clamp(20px, 4vw, 36px); box-shadow: var(--shadow); }
+.progress { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-bottom: 26px; }
+.progress div { border-top: 5px solid var(--line); padding-top: 8px; font-size: 0.88rem; font-weight: 600; color: var(--muted); transition: border-color .3s, color .3s; }
+.progress div.on { border-color: var(--brand); color: var(--fg); }
+.progress div.done { border-color: var(--brand); color: var(--brand); }
+.stepbox { display: grid; gap: 18px; animation: viewIn .4s ease both; }
+.stepbox h2 { font-size: 1.6rem; }
+.opts { display: grid; gap: 12px; }
+.opts.c2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.opt { position: relative; }
+.opt input { position: absolute; opacity: 0; inset: 0; width: 100%; height: 100%; margin: 0; cursor: pointer; }
+.opt .box { border: 2px solid var(--line); border-radius: 16px; padding: 14px 16px; display: flex; gap: 12px; align-items: center; background: var(--surface); transition: border-color .2s, background .2s, transform .2s; min-height: 62px; }
+.opt:hover .box { border-color: color-mix(in srgb, var(--brand) 50%, var(--line)); }
+.opt input:checked + .box { border-color: var(--brand); background: var(--brand-soft); }
+.opt input:focus-visible + .box { outline: 3px solid var(--blue); outline-offset: 2px; }
+.opt .box b { display: block; font-size: 0.98rem; line-height: 1.3; }
+.opt .box small { color: var(--muted); font-size: 0.85rem; }
+.opt .box svg.mini { width: 44px; height: 54px; flex: none; }
+.opt .chk { width: 22px; height: 22px; border-radius: 6px; border: 2px solid var(--line); flex: none; display: grid; place-items: center; color: transparent; font-size: 0.8rem; font-weight: 800; }
+.opt input:checked + .box .chk { background: var(--brand); border-color: var(--brand); color: var(--brand-ink); }
+.opt input[type="radio"] + .box .chk { border-radius: 50%; }
+.actions { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-top: 8px; }
+.side { display: grid; gap: 16px; }
+.side .card { padding: 20px; }
+.side ul { margin: 10px 0 0; padding-left: 20px; color: var(--muted); font-size: 0.95rem; }
+.side li + li { margin-top: 6px; }
+.success { text-align: center; display: grid; gap: 14px; justify-items: center; padding-block: 12px; }
+.success .tick { width: 84px; height: 84px; border-radius: 50%; background: var(--brand); display: grid; place-items: center; animation: pop .6s cubic-bezier(.2,1.4,.4,1) both; }
+.success .tick svg { width: 44px; height: 44px; stroke: var(--brand-ink); fill: none; stroke-width: 4; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 40; animation: draw .6s .3s ease both; }
+@keyframes pop { from { transform: scale(0); } to { transform: none; } }
+@keyframes draw { from { stroke-dashoffset: 40; } to { stroke-dashoffset: 0; } }
+
+/* models */
+.filter { display: flex; gap: 16px; flex-wrap: wrap; align-items: end; margin-bottom: 28px; background: var(--surface); border: 1px solid var(--line); border-radius: 20px; padding: 18px 20px; }
+.filter .field { max-width: 260px; flex: 1 1 200px; }
+.models { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 18px; }
+.model { display: grid; gap: 12px; align-content: start; position: relative; }
+.model.rec { border-color: var(--brand); box-shadow: 0 0 0 3px color-mix(in srgb, var(--brand) 25%, transparent); }
+.model .pic { background: linear-gradient(160deg, var(--brand-soft), var(--surface2)); border-radius: 16px; padding: 16px; display: grid; place-items: center; height: 250px; }
+.model .pic svg { height: 100%; width: auto; max-width: 100%; transition: transform .35s; }
+.model:hover .pic svg { transform: scale(1.05) rotate(-1.5deg); }
+.model ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; font-size: 0.93rem; color: var(--muted); }
+.model li b { color: var(--fg); }
+.model .reco { position: absolute; top: 14px; right: 14px; background: var(--brand); color: var(--brand-ink); font-size: 0.78rem; font-weight: 700; padding: 3px 10px; border-radius: 99px; }
+.fine { color: var(--muted); font-size: 0.85rem; margin-top: 18px; }
+
+/* panel */
+.kpis { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; margin-bottom: 20px; }
+.kpi { background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 18px; }
+.kpi span { color: var(--muted); font-size: 0.88rem; display: block; }
+.kpi b { font-family: var(--font-display); font-size: clamp(1.5rem, 3vw, 2rem); font-weight: 800; }
+.kpi.main { background: var(--brand); color: var(--brand-ink); border-color: var(--brand); }
+.kpi.main span { color: inherit; opacity: .9; }
+.bench { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr); gap: 20px; align-items: start; }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 22px; padding: 24px; min-width: 0; }
+.panel h3 { margin-bottom: 16px; }
+.ctl { display: grid; gap: 8px; margin-bottom: 20px; }
+.ctl label { display: flex; justify-content: space-between; gap: 8px; font-weight: 600; font-size: 0.95rem; }
+.ctl label b { color: var(--brand); font-variant-numeric: tabular-nums; }
+input[type="range"] { width: 100%; accent-color: var(--brand); height: 28px; }
+.pitem td { padding: 10px 10px 10px 0; }
+.pn { display: flex; align-items: center; gap: 10px; font-weight: 600; }
+.pn svg { width: 34px; height: 34px; flex: none; }
+.pn input { width: 20px; height: 20px; accent-color: var(--brand); }
+.days { display: flex; align-items: center; gap: 8px; min-width: 150px; }
+.days span { min-width: 2.4ch; text-align: right; font-weight: 600; font-variant-numeric: tabular-nums; }
+.pill { display: inline-block; font-size: 0.8rem; font-weight: 700; padding: 3px 10px; border-radius: 99px; background: var(--surface2); white-space: nowrap; }
+.pill.ok { color: var(--ok); } .pill.warn { color: var(--warn); } .pill.bad { color: var(--bad); } .pill.off { color: var(--muted); }
+.rm { background: none; border: 0; color: var(--bad); cursor: pointer; font-size: 1.2rem; padding: 4px 8px; border-radius: 8px; }
+.advice { margin-top: 16px; padding: 14px 16px; background: var(--brand-soft); border-radius: 14px; font-size: 0.97rem; }
+.bars { display: grid; gap: 12px; }
+.bar-row { display: grid; grid-template-columns: 120px minmax(0, 1fr) 54px; gap: 10px; align-items: center; font-size: 0.9rem; font-weight: 500; }
+.track { height: 14px; background: var(--surface2); border-radius: 8px; overflow: hidden; }
+.fill { height: 100%; background: var(--muted); border-radius: 8px; transition: width .35s ease; }
+.fill.ai { background: var(--brand); }
+.charts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; margin-top: 20px; }
+.chart h3 { font-size: 0.9rem; color: var(--muted); font-weight: 600; margin-bottom: 4px; font-family: var(--font-body); }
+svg.cv { display: block; width: 100%; height: auto; }
+.ax { stroke: var(--line); stroke-width: 1; }
+.ln { fill: none; stroke: var(--blue); stroke-width: 2.5; }
+.ct { fill: var(--muted); font-family: var(--font-body); font-size: 9px; }
+.mk-ai { stroke: var(--brand); stroke-width: 2; }
+.mk-man { stroke: var(--muted); stroke-width: 1.5; stroke-dasharray: 3 3; }
+.dot-ai { fill: var(--brand); }
+.shade { fill: var(--bad); opacity: 0.12; }
+.addp { margin-top: 22px; border-top: 1px solid var(--line); padding-top: 18px; }
+.addp .row3 { align-items: start; }
+.profile-badge { display: inline-flex; gap: 8px; align-items: center; background: var(--brand-soft); color: var(--brand); font-weight: 600; font-size: 0.93rem; padding: 6px 14px; border-radius: 99px; margin-top: 10px; }
+.note { margin-top: 18px; font-size: 0.9rem; color: var(--muted); border-left: 4px solid var(--warn); padding-left: 14px; max-width: 80ch; }
+
+/* account */
+.acc { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); gap: 22px; align-items: start; }
+.avatar { width: 64px; height: 64px; border-radius: 50%; background: linear-gradient(135deg, var(--brand), var(--blue)); color: #fff; display: grid; place-items: center; font-family: var(--font-display); font-weight: 800; font-size: 1.4rem; }
+.dl { display: grid; grid-template-columns: auto 1fr; gap: 8px 18px; margin: 16px 0 0; }
+.dl dt { color: var(--muted); font-size: 0.93rem; }
+.dl dd { margin: 0; font-weight: 600; word-break: break-word; }
+.empty { text-align: center; display: grid; gap: 14px; justify-items: center; padding: 40px 16px; }
+/* camera + AI chef */
+.cam-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 22px; align-items: start; }
+.stage { background: linear-gradient(160deg, var(--brand-soft), var(--surface2)); border-radius: 24px; padding: 20px; display: grid; justify-items: center; gap: 16px; min-width: 0; }
+svg.cf { width: min(100%, 360px); height: auto; filter: drop-shadow(0 22px 24px rgba(15, 43, 42, 0.25)); }
+.cf .itm { transform-box: fill-box; transform-origin: center bottom; }
+.cf .itm.new { animation: pop .55s cubic-bezier(.2, 1.4, .4, 1) both; }
+.cf .door { animation: none; transform-box: fill-box; transform-origin: left center; transition: transform .8s cubic-bezier(.5, 0, .2, 1); }
+.cf.open .door { transform: scaleX(0.13) skewY(-3deg); }
+.cf:not(.open) .beam, .cf:not(.open) .scan, .cf:not(.open) .bx { display: none; }
+.cf .beam { animation: beam 2.4s ease-in-out infinite; }
+@keyframes beam { 50% { opacity: .35; } }
+.cf .scan { animation: scan 3.4s linear infinite; }
+@keyframes scan { from { transform: translateY(0); } to { transform: translateY(340px); } }
+.cf .led { animation: ledb 1.4s ease-in-out infinite; }
+@keyframes ledb { 50% { opacity: .2; } }
+.cf .bx { fill: none; stroke: #6EF0CF; stroke-width: 1.6; opacity: 0; animation: bx 3.4s linear infinite; }
+@keyframes bx { 0% { opacity: 0; } 4%, 22% { opacity: 1; } 40%, 100% { opacity: 0; } }
+.seen { display: flex; flex-wrap: wrap; gap: 8px; width: 100%; }
+.seen span { display: inline-flex; align-items: center; gap: 6px; background: var(--surface); border: 1px solid var(--line); border-radius: 99px; padding: 4px 12px 4px 6px; font-size: 0.88rem; font-weight: 600; }
+.seen svg { width: 24px; height: 24px; }
+.pgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; margin-top: 14px; }
+.pbtn { font: inherit; font-size: 0.95rem; font-weight: 600; display: flex; align-items: center; gap: 10px; min-height: 52px; padding: 6px 12px; border-radius: 14px; border: 2px solid var(--line); background: var(--surface); color: var(--fg); cursor: pointer; text-align: left; transition: border-color .2s, background .2s, transform .15s; }
+.pbtn:hover { transform: translateY(-2px); border-color: color-mix(in srgb, var(--brand) 50%, var(--line)); }
+.pbtn[aria-pressed="true"] { border-color: var(--brand); background: var(--brand-soft); }
+.pbtn svg { width: 34px; height: 34px; flex: none; }
+.tabs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 18px; }
+.tabs button { font: inherit; font-weight: 600; min-height: 44px; padding: 0 18px; border-radius: 99px; border: 2px solid var(--line); background: var(--surface); color: var(--fg); cursor: pointer; }
+.tabs button[aria-pressed="true"] { background: var(--brand); border-color: var(--brand); color: var(--brand-ink); }
+.recipes { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; margin-top: 18px; }
+.recipe { display: grid; gap: 10px; align-content: start; }
+.rhead { display: flex; justify-content: space-between; gap: 8px; align-items: center; flex-wrap: wrap; }
+.rhead .mt { font-size: 0.82rem; font-weight: 700; color: var(--brand); text-transform: uppercase; letter-spacing: 0.06em; }
+.rmeta { color: var(--muted); font-size: 0.9rem; }
+.ings { display: flex; flex-wrap: wrap; gap: 6px; }
+.ing { font-size: 0.85rem; font-weight: 600; padding: 3px 10px; border-radius: 99px; background: var(--brand-soft); color: var(--ok); }
+.ing.miss { background: var(--surface2); color: var(--warn); }
+.ing.opt { background: transparent; border: 1px dashed var(--line); color: var(--muted); font-weight: 500; }
+.ing.opt.have { border-style: solid; border-color: var(--ok); color: var(--ok); }
+.save { font-size: 0.88rem; color: var(--ok); font-weight: 600; }
+.recipe details { border: 0; background: none; padding: 0; }
+.recipe summary { padding: 8px 0; color: var(--brand); }
+.recipe ol { margin: 0; padding-left: 22px; color: var(--muted); font-size: 0.95rem; }
+.recipe ol li + li { margin-top: 4px; }
+svg.dish { width: 100%; height: auto; display: block; border-radius: 14px; }
+.dish .dg { animation: dgf 3.6s ease-in-out infinite; }
+@keyframes dgf { 50% { transform: translateY(-4px); } }
+.dish .st { animation: steam 2.6s ease-in-out infinite; }
+@keyframes steam { 0% { transform: translateY(6px); opacity: 0; } 40% { opacity: .85; } 100% { transform: translateY(-8px); opacity: 0; } }
+.recipe h4 { font-family: var(--font-display); font-size: 0.92rem; margin: 6px 0 0; }
+.amt { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 18px; }
+.amt li { display: flex; justify-content: space-between; gap: 8px; border-bottom: 1px dashed var(--line); padding: 5px 0; font-size: 0.93rem; }
+.amt li b { font-variant-numeric: tabular-nums; white-space: nowrap; }
+.amt li.have span { color: var(--ok); font-weight: 600; }
+.amt li.miss span { color: var(--warn); font-weight: 600; }
+.amt li.pan span { color: var(--muted); }
+.amt small { color: var(--muted); }
+.steps2 { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.stp { font: inherit; width: 100%; display: grid; grid-template-columns: 30px minmax(0, 1fr) auto; gap: 10px; align-items: start; text-align: left; padding: 10px 12px; border-radius: 12px; border: 2px solid var(--line); background: var(--surface); color: var(--fg); cursor: pointer; font-size: 0.95rem; }
+.stp .sn { width: 28px; height: 28px; border-radius: 50%; background: var(--brand-soft); color: var(--brand); font-weight: 800; display: grid; place-items: center; font-size: 0.85rem; }
+.stp .tm { color: var(--muted); font-size: 0.8rem; white-space: nowrap; padding-top: 4px; }
+.stp[aria-pressed="true"] { border-color: var(--brand); background: var(--brand-soft); }
+.stp[aria-pressed="true"] .tx { text-decoration: line-through; color: var(--muted); }
+.stp[aria-pressed="true"] .sn { background: var(--brand); color: var(--brand-ink); }
+.pantry { color: var(--muted); font-size: 0.9rem; margin-bottom: 16px; }
+.trow { display: grid; grid-template-columns: minmax(110px, 1fr) minmax(130px, 1.3fr) auto; gap: 10px; align-items: center; padding: 8px 0; border-top: 1px solid var(--line); }
+.trow .tn { display: flex; align-items: center; gap: 8px; font-weight: 600; font-size: 0.93rem; }
+.trow .tn svg { width: 28px; height: 28px; flex: none; }
+.bad-t { color: var(--bad); font-weight: 600; font-size: 0.9rem; }
+.shopcard { margin-top: 20px; max-width: 520px; }
+.shoplist { list-style: none; margin: 12px 0 0; padding: 0; }
+.shoplist li { display: flex; justify-content: space-between; align-items: center; gap: 8px; border-bottom: 1px dashed var(--line); padding: 6px 0; }
+.code { background: #0E2A2B; color: #CFEFE6; border-radius: 16px; padding: 18px; overflow-x: auto; font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: 0.85rem; line-height: 1.55; margin: 0; }
+.dgb rect, rect.dgb { fill: var(--surface); stroke: var(--line); stroke-width: 1.5; }
+rect.dgb.strong { stroke: var(--brand); stroke-width: 2.5; fill: var(--brand-soft); }
+rect.dgb.dash { stroke-dasharray: 6 5; }
+.dgt text { fill: var(--fg); font-family: var(--font-body); font-size: 13px; font-weight: 600; }
+.dgt text.sm, text.sm { font-size: 11px; font-weight: 500; fill: var(--muted); font-family: var(--font-body); }
+.dga path { fill: none; stroke: var(--brand); stroke-width: 2; marker-end: url(#arr); }
+footer { border-top: 1px solid var(--line); padding-block: 28px 44px; color: var(--muted); font-size: 0.92rem; }
+
+@media (max-width: 960px) {
+  .cam-grid, .recipes { grid-template-columns: minmax(0, 1fr); }
+  .hero, .calc, .signup, .bench, .acc { grid-template-columns: minmax(0, 1fr); }
+  .grid3 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .stats, .kpis, .models { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .steps { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .steps li::after { display: none; }
+  .scene { min-height: 400px; }
+}
+@media (max-width: 640px) {
+  .trow { grid-template-columns: minmax(0, 1fr) auto; }
+  .trow .days { grid-column: 1 / -1; order: 3; }
+  .amt { grid-template-columns: minmax(0, 1fr); }
+  body { font-size: 16.5px; }
+  nav { order: 3; width: 100%; margin-left: 0; overflow-x: auto; }
+  nav a { white-space: nowrap; }
+  .grid3, .stats, .kpis, .models, .steps, .row2, .row3, .opts.c2, .charts { grid-template-columns: minmax(0, 1fr); }
+  .stats, .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .top-right .btn.primary { padding: 0 14px; }
+  .bar-row { grid-template-columns: 96px minmax(0, 1fr) 48px; }
+  .chip { font-size: 0.82rem; padding: 8px 10px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+  .rv { transform: none; }
+}
+</style>
+</head>
+<body>
+
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <symbol id="i-milk" viewBox="0 0 48 48"><path d="M14 16l5-10h10l5 10v26a2 2 0 0 1-2 2H16a2 2 0 0 1-2-2z" fill="#fff" stroke="#8fb0c4" stroke-width="2" stroke-linejoin="round"/><rect x="15" y="24" width="18" height="14" fill="#4BA3E3"/><path d="M14 16h20" stroke="#8fb0c4" stroke-width="2"/></symbol>
+    <symbol id="i-apple" viewBox="0 0 48 48"><circle cx="18" cy="29" r="12" fill="#E5483A"/><circle cx="30" cy="29" r="12" fill="#E5483A"/><path d="M24 18c0-5 2-8 6-10" stroke="#6b4a2b" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M28 12c4-5 10-3 10-3 0 6-6 8-10 3z" fill="#3FA34D"/><ellipse cx="14" cy="25" rx="3" ry="5" fill="#fff" opacity=".35"/></symbol>
+    <symbol id="i-egg" viewBox="0 0 48 48"><ellipse cx="24" cy="28" rx="12" ry="15" fill="#FFF4DC" stroke="#E6CFA0" stroke-width="2"/><ellipse cx="19" cy="22" rx="3" ry="5" fill="#fff" opacity=".7"/></symbol>
+    <symbol id="i-veg" viewBox="0 0 48 48"><rect x="20" y="28" width="8" height="16" rx="2" fill="#8BC34A"/><circle cx="14" cy="24" r="9" fill="#2E9D4A"/><circle cx="34" cy="24" r="9" fill="#2E9D4A"/><circle cx="24" cy="16" r="11" fill="#38B255"/><circle cx="20" cy="13" r="3" fill="#5FD27A" opacity=".7"/></symbol>
+    <symbol id="i-chicken" viewBox="0 0 48 48"><ellipse cx="19" cy="19" rx="15" ry="12" transform="rotate(-35 19 19)" fill="#D98A3D"/><ellipse cx="14" cy="14" rx="6" ry="3" transform="rotate(-35 14 14)" fill="#F0B070" opacity=".7"/><path d="M28 28l11 11" stroke="#F3E9D8" stroke-width="6" stroke-linecap="round"/><circle cx="41" cy="41" r="4" fill="#F3E9D8"/></symbol>
+    <symbol id="i-fish" viewBox="0 0 48 48"><ellipse cx="22" cy="24" rx="17" ry="11" fill="#6FA8DC"/><path d="M36 24l11-10v20z" fill="#5B93C8"/><ellipse cx="22" cy="28" rx="13" ry="5" fill="#CFE4F5" opacity=".6"/><circle cx="12" cy="21" r="2.4" fill="#0b2a3a"/></symbol>
+    <symbol id="i-meal" viewBox="0 0 48 48"><rect x="6" y="20" width="36" height="22" rx="5" fill="#fff" stroke="#b9c9c8" stroke-width="2"/><rect x="4" y="14" width="40" height="9" rx="3" fill="#0A7F6B"/><circle cx="24" cy="32" r="6" fill="#F2B544"/><circle cx="17" cy="35" r="3" fill="#E5483A"/><circle cx="31" cy="35" r="3" fill="#3FA34D"/></symbol>
+    <symbol id="i-tomato" viewBox="0 0 48 48"><circle cx="24" cy="28" r="15" fill="#E5483A"/><path d="M13 17c4 3 7 2 11 0 4 2 7 3 11 0-2 6-6 7-11 6-5 1-9 0-11-6z" fill="#3FA34D"/><ellipse cx="17" cy="25" rx="3" ry="4.500" fill="#fff" opacity=".3"/></symbol>
+    <symbol id="i-cucumber" viewBox="0 0 48 48"><rect x="5" y="16" width="38" height="16" rx="8" transform="rotate(-30 24 24)" fill="#4CAF50"/><path d="M12 29l3-2M20 25l3-2M28 21l3-2" stroke="#2E7D32" stroke-width="2" stroke-linecap="round"/></symbol>
+    <symbol id="i-carrot" viewBox="0 0 48 48"><path d="M7 41L29 15l6 6z" fill="#F28C28"/><path d="M29 15c1-6 5-9 10-9-1 5-4 9-10 9zM35 21c6-1 9 2 9 7-5 1-8-2-9-7z" fill="#3FA34D"/><path d="M16 31l5 3M21 25l4 3" stroke="#C86A12" stroke-width="2" stroke-linecap="round"/></symbol>
+    <symbol id="i-butter" viewBox="0 0 48 48"><rect x="6" y="20" width="36" height="20" rx="4" fill="#FFE27A"/><rect x="6" y="14" width="36" height="10" rx="4" fill="#FFF0A8"/><path d="M14 32h20" stroke="#E5B93A" stroke-width="2"/></symbol>
+    <symbol id="i-yogurt" viewBox="0 0 48 48"><path d="M10 14h28l-3 28a2 2 0 0 1-2 2H15a2 2 0 0 1-2-2z" fill="#fff" stroke="#c7d2e0" stroke-width="2"/><rect x="9" y="9" width="30" height="7" rx="2" fill="#B58BE0"/><path d="M12 25h24l-1 9H13z" fill="#E7D6F7"/></symbol>
+    <symbol id="i-beef" viewBox="0 0 48 48"><path d="M7 26c0-9 8-14 18-13 10 1 16 8 14 16-2 8-12 10-21 8-7-2-11-5-11-11z" fill="#C2403A"/><circle cx="27" cy="27" r="6" fill="#F4D3C9"/><path d="M12 23c4-6 10-8 16-7" stroke="#F2A79B" stroke-width="2" fill="none" stroke-linecap="round"/></symbol>
+    <symbol id="i-lemon" viewBox="0 0 48 48"><ellipse cx="24" cy="26" rx="17" ry="12" fill="#F6D84A"/><path d="M5 26l-3-2M43 26l3-2" stroke="#E0B91E" stroke-width="3" stroke-linecap="round"/><ellipse cx="18" cy="22" rx="5" ry="3" fill="#fff" opacity=".4"/></symbol>
+    <symbol id="i-bread" viewBox="0 0 48 48"><path d="M8 22c-3-8 4-12 16-12s19 4 16 12c-1 2-2 2-2 4v12a3 3 0 0 1-3 3H13a3 3 0 0 1-3-3V26c0-2-1-2-2-4z" fill="#D9A25B"/><path d="M16 18l4 8M24 16l4 8M32 18l4 8" stroke="#B87D36" stroke-width="2.500" stroke-linecap="round"/></symbol>
+    <symbol id="i-cheese" viewBox="0 0 48 48"><path d="M5 34L42 16v20a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2z" fill="#F6C945"/><path d="M5 34L42 16l-4-6L8 26z" fill="#FBE08A"/><circle cx="18" cy="33" r="3" fill="#E1AE23"/><circle cx="31" cy="30" r="2.4" fill="#E1AE23"/></symbol>
+  </defs>
+</svg>
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="#home"><span class="logo"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round"><path d="M12 2v20M4.5 6.5l15 11M19.5 6.5l-15 11"/></svg></span>Салқын AI</a>
+    <nav id="nav" aria-label="Мәзір">
+      <a href="#home" data-v="home">Басты бет</a>
+      <a href="#models" data-v="models">Модельдер</a>
+      <a href="#panel" data-v="panel">AI панель</a>
+      <a href="#camera" data-v="camera">Ақылды камера</a>
+      <a href="#device" data-v="device">Құрылғы</a>
+    </nav>
+    <div class="top-right">
+      <button class="btn ghost icon-btn" id="theme-btn" type="button" aria-label="Түсті тақырыпты ауыстыру"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 3v18" /><path d="M12 3a9 9 0 0 1 0 18z" fill="currentColor"/></svg></button>
+      <a class="btn primary sm" id="auth-btn" href="#signup">Тіркелу</a>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+<!-- HOME -->
+<div class="view" data-view="home">
+  <div class="hero">
+    <div>
+      <h1>Тоңазытқышыңыз азықты бұзылудан өзі қорғайды</h1>
+      <p class="lead">Салқын AI әр өнімнің қалған сақталу мерзімін болжап, температураны қауіпсіз болатын ең жоғары деңгейге қояды. Азық аз тасталады, электр аз жұмсалады.</p>
+      <div class="hero-cta">
+        <a class="btn primary" href="#signup">Тіркелу</a>
+        <a class="btn ghost" href="#panel">AI панельді көру</a>
+      </div>
+      <div class="badges"><span>Өнімге қарай температура</span><span>Мерзімі туралы ескерту</span><span>Электр үнемі</span></div>
+    </div>
+    <div class="scene" id="hero-scene" aria-hidden="true">
+      <div class="chip g c1"><i></i>Температура 4,0 °C</div>
+      <div class="chip c2"><i></i>Сүт: 3 күн қалды</div>
+      <div class="chip w c3"><i></i>Тауық: бүгін жеңіз</div>
+      <div class="chip b c4"><i></i>Электр −9 %</div>
+    </div>
+  </div>
+
+  <div class="stats">
+    <div class="stat rv"><b data-count="19" data-suf=" %">19 %</b><span>тұтынушыға жеткен азық 2022 жылы қоқысқа түскен</span></div>
+    <div class="stat rv"><b data-count="1.05" data-suf=" млрд т" data-dec="2">1,05 млрд т</b><span>2022 жылы әлемде тасталған азық</span></div>
+    <div class="stat rv"><b data-count="10" data-pre="≤ " data-suf=" %">≤ 10 %</b><span>азық шығыны мен қалдығының әлемдік парниктік газдағы үлесі</span></div>
+    <div class="stat rv"><b data-count="24" data-suf=" сағ">24 сағ</b><span>тоңазытқыш тәулік бойы жұмыс істейді, әр градус маңызды</span></div>
+  </div>
+  <p class="fine" style="margin-top:-30px;margin-bottom:10px">Дереккөз: <a href="https://news.un.org/en/node/1148036" target="_blank" rel="noopener">UN News, 2024</a> · <a href="https://wedocs.unep.org/bitstream/handle/20.500.11822/45275/Food-Waste-Index-2024-key-messages.pdf?sequence=4" target="_blank" rel="noopener">UNEP Food Waste Index 2024</a></p>
+
+  <section>
+    <div class="sec-head rv"><p class="kicker">Мүмкіндіктер</p><h2>Бір тоңазытқыш, тоғыз ақылды функция</h2><p>«Демода» белгісі бар функциялар қазір AI панельде жұмыс істейді. «Жоспарда» белгісі бар функциялар аппараттық прототип кезеңінде қосылады.</p></div>
+    <div class="grid3" id="features"></div>
+  </section>
+
+  <section>
+    <div class="sec-head rv"><p class="kicker">Қалай жұмыс істейді</p><h2>Өлшейді, болжайды, басқарады</h2></div>
+    <ol class="steps rv">
+      <li><h3>Өлшейді</h3><p>Температура, ылғалдылық, есік ашылуы және өнім салмағы туралы деректер жиналады.</p></li>
+      <li><h3>Болжайды</h3><p>Модель әр өнімнің қалған сақталу мерзімін күнмен есептейді.</p></li>
+      <li><h3>Басқарады</h3><p>Барлық өнім қауіпсіз болатын ең жоғары температура қойылады, компрессор аз жұмыс істейді.</p></li>
+      <li><h3>Ескертеді</h3><p>«Сүтті бүгін ішіңіз» сияқты хабарлама келеді. Азық тасталмайды.</p></li>
+    </ol>
+  </section>
+
+  <section>
+    <div class="sec-head rv"><p class="kicker">Салыстыру</p><h2>Әдеттегі тоңазытқыш пен Салқын AI</h2></div>
+    <div class="table-scroll rv"><table>
+      <thead><tr><th>Көрсеткіш</th><th>Әдеттегі тоңазытқыш</th><th>Салқын AI</th></tr></thead>
+      <tbody>
+        <tr><td>Температура</td><td class="old">Бір мән, қолмен қойылады</td><td class="good">Өнімге қарай өзі өзгереді</td></tr>
+        <tr><td>Сақталу мерзімі</td><td class="old">Тек қаптамадағы күн</td><td class="good">Нақты жағдайға болжам</td></tr>
+        <tr><td>Бұзылу туралы ескерту</td><td class="old">Жоқ</td><td class="good">Бар, бұзылмай тұрып</td></tr>
+        <tr><td>Электр шығыны</td><td class="old">Қажеттен артық салқындату</td><td class="good">Қауіпсіз ең жоғары температура</td></tr>
+        <tr><td>Есік ашудың әсері</td><td class="old">Есепке алынбайды</td><td class="good">Болжамға қосылады</td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <section>
+    <div class="sec-head rv"><p class="kicker">Есептеуіш</p><h2>Отбасыңыз қанша үнемдей алады</h2><p>Өз санын жазыңыз. Нәтиже болжам: ол сіз таңдаған сценарийге негізделген, нақты өлшем емес.</p></div>
+    <div class="calc rv">
+      <div class="card">
+        <div class="row2">
+          <div class="field"><label for="k-waste">Айына тасталатын азық, кг</label><input id="k-waste" type="text" inputmode="numeric" data-rule="int" data-min="0" data-max="200" value="12" autocomplete="off"><p class="err" id="err-k-waste"></p></div>
+          <div class="field"><label for="k-price">1 кг азық бағасы, ₸</label><input id="k-price" type="text" inputmode="numeric" data-rule="int" data-min="100" data-max="20000" value="1500" autocomplete="off"><p class="err" id="err-k-price"></p></div>
+          <div class="field"><label for="k-kwh">Тоңазытқыш жылына, кВт·сағ</label><input id="k-kwh" type="text" inputmode="numeric" data-rule="int" data-min="50" data-max="1500" value="300" autocomplete="off"><p class="err" id="err-k-kwh"></p></div>
+          <div class="field"><label for="k-tariff">Тариф, ₸ / кВт·сағ</label><input id="k-tariff" type="text" inputmode="numeric" data-rule="int" data-min="1" data-max="300" value="25" autocomplete="off"><p class="err" id="err-k-tariff"></p></div>
+        </div>
+        <div class="field" style="margin-top:14px"><label for="k-cut">Азық шығыны қанша азаяды деп есептейміз</label>
+          <select id="k-cut"><option value="10">10 %, сақ сценарий</option><option value="20" selected>20 %, орташа сценарий</option><option value="30">30 %, оптимистік сценарий</option></select></div>
+        <p class="hint" style="color:var(--muted);font-size:.85rem;margin-top:12px">Бастапқы сандар мысал ретінде қойылған. Өз мәніңізді жазыңыз. Электр үнемі 9 % деп алынған (AI панельдегі әдепкі жағдай).</p>
+      </div>
+      <div class="result" aria-live="polite">
+        <small>Жылына болжамды үнем</small>
+        <div class="big" id="r-money">0 ₸</div>
+        <div class="line"><span>Аз тасталатын азық</span><span id="r-food">0 кг</span></div>
+        <div class="line"><span>Аз жұмсалатын электр</span><span id="r-kwh">0 кВт·сағ</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head rv"><p class="kicker">Сұрақтар</p><h2>Жиі қойылатын сұрақтар</h2></div>
+    <div class="rv" style="max-width:820px">
+      <details><summary>Салқын AI нақты өнім бе?</summary><p>Бұл студенттік жоба. Қазір жұмыс істейтін нұсқасы веб-прототип: AI панельде тоңазытқышты модельдеуге болады. Аппараттық прототип келесі кезеңде жасалады.</p></details>
+      <details><summary>Болжам қалай есептеледі?</summary><p>Бұзылу жылдамдығы температурамен өседі: 10 °C жылы болса, шамамен үш есе тез. Модель осы заңдылықты, есік ашу санын және бөлме температурасын ескереді. Келесі кезеңде ол нақты сенсор деректерімен оқытылады.</p></details>
+      <details><summary>Қауіпсіздік қалай сақталады?</summary><p>Ет пен балықтың температуралық шегі қатаң: одан жоғары көтерілмейді. Электр үнемі қауіпсіздіктен маңызды емес.</p></details>
+      <details><summary>Менің тоңазытқышыма қосуға бола ма?</summary><p>Тіркелу кезінде өз тоңазытқышыңыздың маркасын, жасын және көлемін жазасыз. Болашақта сенсор жинағы арқылы қолданыстағы тоңазытқышқа қосу жоспарланған.</p></details>
+      <details><summary>Деректерім қайда сақталады?</summary><p>Демо нұсқада тіркелу деректері тек сіздің браузеріңізде сақталады, серверге жіберілмейді. Құпия сөз мүлде сақталмайды.</p></details>
+    </div>
+  </section>
+
+  <section>
+    <div class="cta-band rv"><h2>Тоңазытқышыңызды ақылды етіп көріңіз</h2><a class="btn" href="#signup">Тіркелуді бастау</a></div>
+  </section>
+</div>
+
+<!-- MODELS -->
+<div class="view" data-view="models" hidden>
+  <section>
+    <div class="sec-head"><p class="kicker">Модельдер</p><h1 style="font-size:clamp(1.9rem,4.5vw,2.8rem)">Отбасыңызға лайық модельді таңдаңыз</h1><p>Отбасы мүшелерінің санын жазыңыз, біз сәйкес модельді белгілейміз.</p></div>
+    <div class="filter">
+      <div class="field"><label for="f-people">Отбасы мүшелерінің саны</label><input id="f-people" type="text" inputmode="numeric" data-rule="int" data-min="1" data-max="20" placeholder="Мысалы: 4" autocomplete="off"><p class="err" id="err-f-people"></p></div>
+      <p id="f-result" style="color:var(--muted);flex:2 1 260px;padding-bottom:26px">Санды жазсаңыз, ұсынылатын модель белгіленеді.</p>
+    </div>
+    <div class="models" id="models"></div>
+    <p class="fine">Модельдер жоба концепті. Көлем, сенсор саны және энергия класы жобалық мәндер, сатылымдағы өнімнің сипаттамасы емес.</p>
+  </section>
+</div>
+
+<!-- PANEL -->
+<div class="view" data-view="panel" hidden>
+  <section>
+    <div class="sec-head"><p class="kicker">AI панель</p><h1 style="font-size:clamp(1.9rem,4.5vw,2.8rem)">Тоңазытқышты модельдеңіз</h1><p>Өнімдерді белгілеп, қанша күн сақталғанын көрсетіңіз. Бөлме температурасын және есік ашу санын өзгертіп, AI шешімін қолмен қойылған температурамен салыстырыңыз.</p><div class="profile-badge" id="pbadge" hidden></div></div>
+    <div class="kpis" aria-live="polite">
+      <div class="kpi main"><span>AI таңдаған температура</span><b id="k-set">–</b></div>
+      <div class="kpi"><span>Электр үнемі (2 °C-қа қарағанда)</span><b id="k-save">–</b></div>
+      <div class="kpi"><span>Тез пайдалану керек өнім</span><b id="k-urg">–</b></div>
+      <div class="kpi"><span>Ең жақын мерзім</span><b id="k-min">–</b></div>
+    </div>
+    <div class="bench">
+      <div class="panel">
+        <h3>Жағдай</h3>
+        <div class="ctl"><label for="room">Бөлме температурасы <b id="room-v"></b></label><input id="room" type="range" min="16" max="32" step="1" value="24"></div>
+        <div class="ctl"><label for="doors">Есік ашу, тәулігіне <b id="doors-v"></b></label><input id="doors" type="range" min="0" max="60" step="1" value="20"></div>
+        <div class="ctl"><label for="manual">Қолмен қойылған температура <b id="manual-v"></b></label><input id="manual" type="range" min="0" max="10" step="0.5" value="4"></div>
+        <h3 style="margin-top:26px">Электр шығыны (2 °C = 100 %)</h3>
+        <div class="bars">
+          <div class="bar-row"><span>Тұрақты 2 °C</span><div class="track"><div class="fill" id="f-fixed"></div></div><b class="num" id="v-fixed"></b></div>
+          <div class="bar-row"><span>Қолмен</span><div class="track"><div class="fill" id="f-manual"></div></div><b class="num" id="v-manual"></b></div>
+          <div class="bar-row"><span>Салқын AI</span><div class="track"><div class="fill ai" id="f-ai"></div></div><b class="num" id="v-ai"></b></div>
+        </div>
+      </div>
+      <div class="panel">
+        <h3>Тоңазытқыштағы өнімдер</h3>
+        <div class="table-scroll" style="border:0;background:none"><table style="min-width:540px">
+          <thead><tr><th>Өнім</th><th>Сақталған күн</th><th>Қолмен: қалды</th><th>AI: қалды</th><th></th></tr></thead>
+          <tbody id="rows"></tbody>
+        </table></div>
+        <div class="advice" id="advice"></div>
+        <div class="addp">
+          <h3>Өз өнімімді қосу</h3>
+          <div class="row3">
+            <div class="field"><label for="np-name">Атауы</label><input id="np-name" type="text" data-rule="name" maxlength="24" placeholder="Мысалы: Йогурт" autocomplete="off"><p class="err" id="err-np-name"></p></div>
+            <div class="field"><label for="np-days">Мерзімі, күн</label><input id="np-days" type="text" inputmode="numeric" data-rule="int" data-min="1" data-max="60" placeholder="1–60" autocomplete="off"><p class="err" id="err-np-days"></p></div>
+            <div class="field"><label for="np-max">Шекті температура, °C</label><input id="np-max" type="text" inputmode="numeric" data-rule="int" data-min="0" data-max="10" placeholder="0–10" autocomplete="off"><p class="err" id="err-np-max"></p></div>
+          </div>
+          <button class="btn primary sm" id="np-add" type="button">Қосу</button>
+        </div>
+        <div class="charts">
+          <div class="chart"><h3>Ең тез бұзылатын өнімнің қалған күні, температураға қарай</h3><svg class="cv" id="c1" viewBox="0 0 320 190" role="img" aria-label="Қалған мерзім графигі"></svg></div>
+          <div class="chart"><h3>Электр шығыны (%), температураға қарай</h3><svg class="cv" id="c2" viewBox="0 0 320 190" role="img" aria-label="Электр шығыны графигі"></svg></div>
+        </div>
+      </div>
+    </div>
+    <p class="note">Бұл жобаның бағдарламалық прототипі. Сақталу мерзімдері жалпы ұсынымдардан алынған шамамен мәндер, электр үнемі жылу алмасу моделінен есептелген. Нақты тоңазытқышта өлшенген деректер емес. Формула: бұзылу жылдамдығы = 3^((T − 4) / 10), қалған мерзім = L₄ / жылдамдық − сақталған күн.</p>
+  </section>
+</div>
+
+<!-- CAMERA + AI CHEF -->
+<div class="view" data-view="camera" hidden>
+  <section>
+    <div class="sec-head">
+      <p class="kicker">Ақылды камера</p>
+      <h1 style="font-size:clamp(1.9rem,4.5vw,2.8rem)">Тоңазытқышта бар өнімнен не істеуге болады</h1>
+      <p>Тоңазытқыш моделін таңдап, ішіндегі өнімдерді белгілеңіз. Үстіндегі камера оларды «көреді», ал AI аспаз таңғы ас, түскі ас, кешкі ас және десерт ұсынады.</p>
+    </div>
+    <div class="cam-grid">
+      <div class="stage">
+        <div class="opts c2" role="radiogroup" aria-label="Тоңазытқыш моделі" style="width:100%">
+          <label class="opt"><input type="radio" name="cbrand" value="samsung" checked><div class="box"><span class="chk">✓</span><div><b>Samsung RB37</b><small>шамамен 370 л, күміс</small></div></div></label>
+          <label class="opt"><input type="radio" name="cbrand" value="lg"><div class="box"><span class="chk">✓</span><div><b>LG GA-B509</b><small>шамамен 380 л, графит</small></div></div></label>
+        </div>
+        <div id="cam-stage" style="width:100%;display:grid;justify-items:center"></div>
+        <button class="btn ghost sm" id="cam-door" type="button">Есікті жабу</button>
+        <div style="width:100%"><p class="legend" style="margin-bottom:8px">Камера көрді</p><div class="seen" id="cam-seen" aria-live="polite"></div></div>
+      </div>
+      <div class="card">
+        <h3>Тоңазытқыштағы өнімдер</h3>
+        <p style="color:var(--muted);font-size:.93rem;margin-top:6px">Өнімді басып қосыңыз немесе алып тастаңыз. Тоңазытқышқа 16 өнімге дейін сияды.</p>
+        <div class="pgrid" id="pgrid"></div>
+        <div class="addp">
+          <h3>Мерзімді бақылау</h3>
+          <p style="color:var(--muted);font-size:.9rem;margin:6px 0 12px">Әр өнім қанша күн сақталғанын көрсетіңіз. Қалған мерзім бөлме температурасы мен есік ашу санын ескереді (4 °C-та). Мерзімі өткен өнім рецептке қосылмайды.</p>
+          <div id="urgent" aria-live="polite"></div><div id="trk"></div>
+        </div>
+        <div class="addp">
+          <h3>Өз өнімімді қосу</h3>
+          <div class="field" style="margin-top:12px"><label for="cp-name">Өнім атауы</label><input id="cp-name" type="text" data-rule="name" maxlength="24" placeholder="Мысалы: Қаймақ" autocomplete="off"><p class="err" id="err-cp-name"></p></div>
+          <div class="hero-cta" style="margin-top:6px"><button class="btn primary sm" id="cp-add" type="button">Қосу</button><button class="btn ghost sm" id="cp-sample" type="button">Мысал жинағы</button><button class="btn ghost sm" id="cp-clear" type="button">Тазалау</button></div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section style="padding-top:0">
+    <div class="sec-head"><p class="kicker">AI аспаз</p><h2>Бүгін не дайындаймыз</h2><p id="chef-sum"></p></div>
+    <p class="pantry">Үйде бар деп есептейміз: тұз, бұрыш, өсімдік майы, ұн, қант, күріш, макарон, картоп, су.</p>
+    <div class="tabs" id="tabs" role="group" aria-label="Тағам түрі">
+      <button type="button" data-tab="all" aria-pressed="true">Барлығы</button>
+      <button type="button" data-tab="b" aria-pressed="false">Таңғы ас</button>
+      <button type="button" data-tab="l" aria-pressed="false">Түскі ас</button>
+      <button type="button" data-tab="d" aria-pressed="false">Кешкі ас</button>
+      <button type="button" data-tab="s" aria-pressed="false">Десерт</button>
+    </div>
+    <div class="tabs" id="serv" role="group" aria-label="Порция саны"><span class="legend" style="align-self:center;margin-right:6px">Порция саны:</span>
+      <button type="button" data-s="1" aria-pressed="false">1</button><button type="button" data-s="2" aria-pressed="true">2</button><button type="button" data-s="4" aria-pressed="false">4</button>
+    </div>
+    <div class="recipes" id="recipes"></div>
+    <div class="card shopcard"><h3>Сатып алу тізімі</h3><ul id="shop" class="shoplist"></ul><div class="hero-cta" style="margin-top:14px"><button class="btn primary sm" id="shop-copy" type="button">Көшіру</button><button class="btn ghost sm" id="shop-clear" type="button">Тазалау</button></div></div>
+    <p class="note">Демо: өнімдерді сіз таңдайсыз. Нақты құрылғыда камера суретті өзі таниды, бұл жоспарда. Тағамдардың суреттері иллюстрация, нақты фото емес. YouTube түймесі рецепт атауымен бейне іздейді. Мөлшерлер шамамен, дәмге қарай түзетіңіз. Рецепттер қазір ингредиент сәйкестігі алгоритмімен таңдалады, үлкен тіл моделін қосу жоспарда. Бұзылуға жақын өнімді қолданатын рецепт жоғары тұрады, сондықтан азық аз тасталады.</p>
+  </section>
+</div>
+
+<!-- DEVICE -->
+<div class="view" data-view="device" hidden>
+  <section>
+    <div class="sec-head"><p class="kicker">Құрылғы</p><h1 style="font-size:clamp(1.9rem,4.5vw,2.8rem)">Нақты прототиптің құрылымы</h1><p>Веб-симулятордан кейінгі қадам: тоңазытқышқа қойылатын сенсорлар жинағы. Төменде не қосылатыны, қалай қосылатыны және оны қалай тексеретініміз жазылған.</p></div>
+    <div class="card" style="padding:18px">
+      <svg class="cv" viewBox="0 0 780 310" role="img" aria-label="Құрылғы сызбасы: сенсорлар ESP32-ге, одан сайтқа және релеге қосылады">
+        <defs><marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="var(--brand)"/></marker></defs>
+        <g class="dgb"><rect x="10" y="10" width="190" height="42" rx="10"/><rect x="10" y="68" width="190" height="42" rx="10"/><rect x="10" y="126" width="190" height="42" rx="10"/><rect x="10" y="184" width="190" height="42" rx="10"/><rect x="10" y="242" width="190" height="42" rx="10"/></g>
+        <g class="dgt"><text x="105" y="36" text-anchor="middle">Температура · DS18B20</text><text x="105" y="94" text-anchor="middle">Ылғалдылық · DHT22</text><text x="105" y="152" text-anchor="middle">Газ · MQ-135</text><text x="105" y="210" text-anchor="middle">Есік · геркон</text><text x="105" y="268" text-anchor="middle">Камера · ESP32-CAM</text></g>
+        <g class="dga"><path d="M200 31L318 135"/><path d="M200 89L318 145"/><path d="M200 147L318 155"/><path d="M200 205L318 168"/><path d="M200 263L318 178"/></g>
+        <rect class="dgb strong" x="320" y="100" width="170" height="100" rx="14"/>
+        <g class="dgt"><text x="405" y="140" text-anchor="middle" style="font-weight:800">ESP32</text><text x="405" y="162" text-anchor="middle" class="sm">деректерді өңдеу</text><text x="405" y="180" text-anchor="middle" class="sm">болжам моделі</text></g>
+        <g class="dga"><path d="M490 130L588 70"/><path d="M490 172L588 232" stroke-dasharray="6 6"/></g>
+        <rect class="dgb" x="590" y="36" width="180" height="66" rx="12"/>
+        <rect class="dgb dash" x="590" y="200" width="180" height="70" rx="12"/>
+        <g class="dgt"><text x="680" y="64" text-anchor="middle">Сайт / телефон</text><text x="680" y="84" text-anchor="middle" class="sm">Wi-Fi, хабарлама</text><text x="680" y="230" text-anchor="middle">Реле / терморегулятор</text><text x="680" y="250" text-anchor="middle" class="sm">кейінгі кезең</text></g>
+        <text x="540" y="108" class="sm" style="fill:var(--muted)">Wi-Fi</text>
+      </svg>
+    </div>
+  </section>
+  <section style="padding-top:0">
+    <div class="sec-head"><h2>Құрамдас бөліктер</h2></div>
+    <div class="table-scroll"><table>
+      <thead><tr><th>Бөлік</th><th>Не істейді</th><th>Ескерту</th></tr></thead>
+      <tbody>
+        <tr><td><b>ESP32 DevKit</b></td><td>Сенсорларды оқиды, деректерді өңдейді, Wi-Fi-ға қосылады</td><td>Төмен вольтты (USB 5 В)</td></tr>
+        <tr><td><b>DS18B20</b> (су өткізбейтін)</td><td>Тоңазытқыш ішіндегі температураны өлшейді</td><td>Төмен вольтты</td></tr>
+        <tr><td><b>DHT22</b> немесе SHT31</td><td>Ылғалдылықты өлшейді</td><td>Төмен вольтты</td></tr>
+        <tr><td><b>MQ-135</b></td><td>NH₃ және VOC газын байқайды, бұзылудың ерте белгісі</td><td>Калибровка қажет, нәтиже шамамен</td></tr>
+        <tr><td><b>Геркон</b> (магнитті датчик)</td><td>Есіктің ашылуын санайды</td><td>Төмен вольтты</td></tr>
+        <tr><td><b>ESP32-CAM</b></td><td>Ішкі камера, өнімдердің суретін алады</td><td>Өнімді тануға ML-модель кейін қосылады</td></tr>
+        <tr><td><b>Электр есептегіш</b> (ақылды розетка)</td><td>Тоңазытқыштың нақты электр шығынын өлшейді</td><td>220 В, тек дайын, сертификатталған құрылғыны қолданыңыз</td></tr>
+      </tbody>
+    </table></div>
+    <p class="note">Бастапқы прототип тоңазытқыштың өз электр жүйесіне араласпайды: тек сыртқы сенсорлар мен өлшеу. Компрессорды басқару (реле, терморегулятор) 220 В-пен жұмыс, оны тек білікті маман қосуы керек.</p>
+  </section>
+  <section style="padding-top:0">
+    <div class="sec-head"><h2>Үлгі код</h2><p>Температураны өлшеп, есіктің неше рет ашылғанын санайтын ESP32 бағдарламасының бастапқы нұсқасы. Нақты құрылғыда сынау керек.</p></div>
+    <pre class="code" id="code" tabindex="0">#include &lt;OneWire.h&gt;
+#include &lt;DallasTemperature.h&gt;
+
+#define ONE_WIRE_PIN 4   // DS18B20 деректер сымы
+#define DOOR_PIN 14      // геркон, INPUT_PULLUP
+
+OneWire oneWire(ONE_WIRE_PIN);
+DallasTemperature sensors(&amp;oneWire);
+int doorOpens = 0;
+bool lastOpen = false;
+
+void setup() {
+  Serial.begin(115200);
+  pinMode(DOOR_PIN, INPUT_PULLUP);
+  sensors.begin();
+}
+
+void loop() {
+  bool open = digitalRead(DOOR_PIN) == HIGH;   // есік ашық
+  if (open &amp;&amp; !lastOpen) doorOpens++;
+  lastOpen = open;
+
+  sensors.requestTemperatures();
+  float t = sensors.getTempCByIndex(0);
+  Serial.printf("temp=%.1f door_opens=%d\n", t, doorOpens);
+  delay(1000);
+}</pre>
+    <div class="hero-cta" style="margin-top:12px"><button class="btn ghost sm" id="code-copy" type="button">Кодты көшіру</button></div>
+  </section>
+  <section style="padding-top:0">
+    <div class="sec-head"><h2>Қалай тексереміз</h2></div>
+    <div class="grid3">
+      <div class="card"><h3>1. Деректерді жазу</h3><p style="color:var(--muted);margin-top:8px;font-size:.95rem">Тоңазытқыш ішіндегі температураны 24 сағат үздіксіз жазамыз. Есік ашылуын санап, температураның қалай көтерілетінін көреміз.</p></div>
+      <div class="card"><h3>2. Модельді түзету</h3><p style="color:var(--muted);margin-top:8px;font-size:.95rem">Есікті 0, 10, 20 рет ашып өлшейміз. Нәтижемен симулятордағы формуланың есік коэффициентін (0,0025) нақтылаймыз.</p></div>
+      <div class="card"><h3>3. Электр шығыны</h3><p style="color:var(--muted);margin-top:8px;font-size:.95rem">Электр есептегішпен тоңазытқышты 2, 4 және 6 °C-та бір-бірден екі тәулік жұмыс істетіп, нақты кВт·сағ шығынды салыстырамыз.</p></div>
+    </div>
+  </section>
+</div>
+
+<!-- SIGNUP -->
+<div class="view" data-view="signup" hidden>
+  <section>
+    <div class="sec-head"><p class="kicker">Тіркелу</p><h1 style="font-size:clamp(1.9rem,4.5vw,2.8rem)">Тоңазытқышыңызды қосыңыз</h1><p>Үш қадам: жеке деректер, тоңазытқыш, баптаулар. Бір минут алады.</p></div>
+    <div class="signup">
+      <form class="formcard" id="form" novalidate autocomplete="off">
+        <div class="progress" id="progress"><div class="on">1. Деректер</div><div>2. Тоңазытқыш</div><div>3. Баптаулар</div></div>
+
+        <div class="stepbox" data-step="1">
+          <h2>Жеке деректер</h2>
+          <div class="row2">
+            <div class="field"><label for="fn">Аты</label><input id="fn" type="text" data-rule="name" maxlength="30" placeholder="Мысалы: Айдар" autocomplete="given-name"><p class="err" id="err-fn"></p></div>
+            <div class="field"><label for="ln">Тегі</label><input id="ln" type="text" data-rule="name" maxlength="30" placeholder="Мысалы: Сәрсенов" autocomplete="family-name"><p class="err" id="err-ln"></p></div>
+          </div>
+          <div class="row2">
+            <div class="field"><label for="email">Электрондық пошта</label><input id="email" type="email" data-rule="email" maxlength="60" placeholder="name@mail.kz" autocomplete="email"><p class="err" id="err-email"></p></div>
+            <div class="field"><label for="phone">Телефон</label><div class="phone"><span>+7</span><input id="phone" type="tel" inputmode="numeric" data-rule="phone" placeholder="(777) 123-45-67" autocomplete="tel-national"></div><p class="err" id="err-phone"></p></div>
+          </div>
+          <div class="field"><label for="city">Қала</label>
+            <select id="city" data-rule="select"><option value="">Қаланы таңдаңыз</option><option>Астана</option><option>Алматы</option><option>Шымкент</option><option>Тараз</option><option>Қарағанды</option><option>Ақтөбе</option><option>Атырау</option><option>Павлодар</option><option>Өскемен</option><option>Семей</option><option>Қостанай</option><option>Басқа қала</option></select><p class="err" id="err-city"></p></div>
+          <div class="row2">
+            <div class="field"><label for="pw">Құпия сөз</label><div class="pwbox"><input id="pw" type="password" data-rule="pw" maxlength="40" placeholder="Кемінде 8 таңба" autocomplete="new-password"><button type="button" data-show="pw">Көрсету</button></div><div class="meter" aria-hidden="true"><i id="meter"></i></div><p class="err" id="err-pw"></p></div>
+            <div class="field"><label for="pw2">Құпия сөзді қайталаңыз</label><div class="pwbox"><input id="pw2" type="password" data-rule="pw2" maxlength="40" autocomplete="new-password"><button type="button" data-show="pw2">Көрсету</button></div><p class="err" id="err-pw2"></p></div>
+          </div>
+          <p class="hint" style="color:var(--muted);font-size:.85rem">Құпия сөзде әріп пен сан болуы керек. Демо нұсқада құпия сөз сақталмайды.</p>
+        </div>
+
+        <div class="stepbox" data-step="2" hidden>
+          <h2>Тоңазытқыш</h2>
+          <div class="opts c2" role="radiogroup" aria-label="Тоңазытқыш түрі">
+            <label class="opt"><input type="radio" name="mode" value="own" checked><div class="box"><span class="chk">✓</span><div><b>Менде тоңазытқыш бар</b><small>Қолданыстағы тоңазытқышты қосамын</small></div></div></label>
+            <label class="opt"><input type="radio" name="mode" value="new"><div class="box"><span class="chk">✓</span><div><b>Салқын AI моделін таңдаймын</b><small>Жаңа ақылды тоңазытқыш</small></div></div></label>
+          </div>
+          <div id="mode-own" class="stepbox" style="animation:none">
+            <div class="row2">
+              <div class="field"><label for="brand">Марка</label><select id="brand" data-rule="select" data-for="own"><option value="">Маркаңызды таңдаңыз</option><option>Samsung</option><option>LG</option><option>Bosch</option><option>Haier</option><option>Atlant</option><option>Beko</option><option>Indesit</option><option>Midea</option><option>Hisense</option><option>Басқа марка</option></select><p class="err" id="err-brand"></p></div>
+              <div class="field"><label for="mname">Модель атауы</label><input id="mname" type="text" data-rule="model" data-for="own" maxlength="24" placeholder="Мысалы: RB37" autocomplete="off"><p class="err" id="err-mname"></p></div>
+            </div>
+            <div class="row3">
+              <div class="field"><label for="year">Шығарылған жылы</label><input id="year" type="text" inputmode="numeric" data-rule="int" data-for="own" data-min="1990" data-max="2026" maxlength="4" placeholder="2018" autocomplete="off"><p class="err" id="err-year"></p></div>
+              <div class="field"><label for="vol">Көлемі, литр</label><input id="vol" type="text" inputmode="numeric" data-rule="int" data-for="own" data-min="50" data-max="800" maxlength="3" placeholder="300" autocomplete="off"><p class="err" id="err-vol"></p></div>
+              <div class="field"><label for="ftype">Түрі</label><select id="ftype" data-rule="select" data-for="own"><option value="">Таңдаңыз</option><option>Бір камералы</option><option>Екі камералы</option><option>Қатар есікті (side-by-side)</option></select><p class="err" id="err-ftype"></p></div>
+            </div>
+          </div>
+          <div id="mode-new" class="stepbox" style="animation:none" hidden>
+            <div class="legend">Модель</div>
+            <div class="opts c2" id="model-opts"></div>
+            <p class="err" id="err-model"></p>
+            <div class="legend">Түсі</div>
+            <div class="opts c2" style="grid-template-columns:repeat(3,minmax(0,1fr))">
+              <label class="opt"><input type="radio" name="color" value="Ақ" checked><div class="box"><span class="chk">✓</span><b>Ақ</b></div></label>
+              <label class="opt"><input type="radio" name="color" value="Күміс"><div class="box"><span class="chk">✓</span><b>Күміс</b></div></label>
+              <label class="opt"><input type="radio" name="color" value="Қара"><div class="box"><span class="chk">✓</span><b>Қара</b></div></label>
+            </div>
+          </div>
+        </div>
+
+        <div class="stepbox" data-step="3" hidden>
+          <h2>Баптаулар</h2>
+          <div class="row3">
+            <div class="field"><label for="people">Отбасы мүшесі</label><input id="people" type="text" inputmode="numeric" data-rule="int" data-min="1" data-max="20" maxlength="2" placeholder="4" autocomplete="off"><p class="err" id="err-people"></p></div>
+            <div class="field"><label for="room-s">Бөлме температурасы, °C</label><input id="room-s" type="text" inputmode="numeric" data-rule="int" data-min="10" data-max="35" maxlength="2" placeholder="24" autocomplete="off"><p class="err" id="err-room-s"></p></div>
+            <div class="field"><label for="doors-s">Есік ашу, тәулігіне</label><input id="doors-s" type="text" inputmode="numeric" data-rule="int" data-min="0" data-max="100" maxlength="3" placeholder="20" autocomplete="off"><p class="err" id="err-doors-s"></p></div>
+          </div>
+          <div><div class="legend" style="margin-bottom:10px">Қандай өнімдерді сақтайсыз?</div>
+            <div class="opts c2" id="types"></div><p class="err" id="err-types"></p></div>
+          <div><div class="legend" style="margin-bottom:10px">Хабарлама қайда келсін?</div>
+            <div class="opts c2" id="channels"></div><p class="err" id="err-channels"></p></div>
+          <label class="opt"><input type="checkbox" id="auto" checked><div class="box"><span class="chk">✓</span><div><b>Автоматты режим</b><small>AI температураны өзі реттейді</small></div></div></label>
+          <div><label class="opt"><input type="checkbox" id="agree"><div class="box"><span class="chk">✓</span><b style="font-weight:500">Деректерімді жоба аясында өңдеуге келісемін</b></div></label><p class="err" id="err-agree"></p></div>
+        </div>
+
+        <div class="stepbox success" id="done" hidden>
+          <div class="tick"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>
+          <h2>Тіркелу аяқталды</h2>
+          <p style="color:var(--muted)" id="done-text"></p>
+          <div class="hero-cta" style="justify-content:center"><a class="btn primary" href="#account">Кабинетке өту</a><a class="btn ghost" href="#panel">AI панельді ашу</a></div>
+        </div>
+
+        <div class="actions" id="actions">
+          <button class="btn ghost" type="button" id="back" hidden>Артқа</button>
+          <button class="btn primary" type="button" id="next" style="margin-left:auto">Келесі қадам</button>
+        </div>
+      </form>
+      <aside class="side">
+        <div class="card"><h3>Тіркелгенде не аласыз</h3><ul><li>Өз тоңазытқышыңыздың профилі</li><li>Өнімдер бойынша AI температура ұсынысы</li><li>Электр үнемінің болжамы</li><li>Бұзылу туралы ескерту арналарын таңдау</li></ul></div>
+        <div class="card"><h3>Демо нұсқа</h3><p style="color:var(--muted);font-size:.95rem;margin-top:8px">Деректер тек осы браузерде сақталады. Құпия сөз сақталмайды.</p></div>
+      </aside>
+    </div>
+  </section>
+</div>
+
+<!-- ACCOUNT -->
+<div class="view" data-view="account" hidden>
+  <section id="account-root"></section>
+</div>
+
+</main>
+<footer><div class="wrap">© 2026 Салқын AI · Студенттік жоба. Модельдер мен сипаттамалар концепт.</div></footer>
+
+<script>
+(function () {
+  "use strict";
+  function $(id) { return document.getElementById(id); }
+  function $$(s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); }
+  var mem = {};
+  function sget(k) { try { return localStorage.getItem(k); } catch (e) { return mem[k] || null; } }
+  function sset(k, v) { try { localStorage.setItem(k, v); } catch (e) { mem[k] = v; } }
+  function sdel(k) { try { localStorage.removeItem(k); } catch (e) { delete mem[k]; } }
+  function f1(x) { return (Math.round(x * 10) / 10).toString().replace(".", ","); }
+  function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
+
+  /* ---------- fridge illustration ---------- */
+  var gid = 0;
+  function fridge(o) {
+    o = o || {}; gid++;
+    var v = o.variant || "home", id = "g" + gid, col = o.color || "Күміс";
+    var pal = { "Ақ": ["#FFFFFF", "#E3EBEB"], "Күміс": ["#F1F5F6", "#C9D5D7"], "Қара": ["#4A5558", "#252D30"] }[col] || ["#F1F5F6", "#C9D5D7"];
+    var hnd = col === "Қара" ? "#8FA0A3" : "#9FB3B2";
+    var W = v === "max" ? 380 : 300, H = v === "mini" ? 360 : 520;
+    var bodyH = H - 24;
+    var s = '<svg class="fr" viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="Тоңазытқыш"><defs><linearGradient id="' + id + 'a" x1="0" x2="1"><stop offset="0" stop-color="' + pal[0] + '"/><stop offset="1" stop-color="' + pal[1] + '"/></linearGradient><linearGradient id="' + id + 'b" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#F4FBF9"/><stop offset="1" stop-color="#D6EBE6"/></linearGradient></defs>';
+    s += '<rect x="14" y="8" width="' + (W - 28) + '" height="' + bodyH + '" rx="24" fill="#B7C7C7"/>';
+    s += '<rect x="20" y="12" width="' + (W - 40) + '" height="' + (bodyH - 8) + '" rx="20" fill="url(#' + id + 'a)" stroke="#AFC0C0" stroke-width="1.5"/>';
+    var x0 = 32, w0 = W - 64;
+    if (v === "max") {
+      var hw = (w0 - 8) / 2;
+      s += '<rect x="' + x0 + '" y="26" width="' + hw + '" height="' + (bodyH - 40) + '" rx="14" fill="url(#' + id + 'a)" stroke="#AFC0C0"/>';
+      s += '<rect x="' + (x0 + hw + 8) + '" y="26" width="' + hw + '" height="' + (bodyH - 40) + '" rx="14" fill="url(#' + id + 'a)" stroke="#AFC0C0"/>';
+      s += '<rect x="' + (x0 + hw - 18) + '" y="180" width="8" height="120" rx="4" fill="' + hnd + '"/><rect x="' + (x0 + hw + 18) + '" y="180" width="8" height="120" rx="4" fill="' + hnd + '"/>';
+      s += '<rect x="' + (W / 2 - 52) + '" y="70" width="104" height="54" rx="10" fill="#0E2A2B"/><text x="' + W / 2 + '" y="106" text-anchor="middle" font-family="Montserrat,Arial,sans-serif" font-weight="800" font-size="26" fill="#6EF0CF">4,0°</text>';
+      s += '<circle cx="' + (W / 2) + '" cy="150" r="6" fill="#0E2A2B"/><circle cx="' + (W / 2) + '" cy="150" r="2.5" fill="#6EF0CF"/>';
+    } else if (v === "mini") {
+      s += '<rect x="' + x0 + '" y="26" width="' + w0 + '" height="70" rx="12" fill="url(#' + id + 'a)" stroke="#AFC0C0"/><rect x="' + x0 + '" y="104" width="' + w0 + '" height="' + (bodyH - 118) + '" rx="12" fill="url(#' + id + 'a)" stroke="#AFC0C0"/>';
+      s += '<rect x="46" y="116" width="8" height="70" rx="4" fill="' + hnd + '"/><rect x="46" y="60" width="8" height="24" rx="4" fill="' + hnd + '"/>';
+      s += '<rect x="96" y="44" width="110" height="34" rx="8" fill="#0E2A2B"/><text x="151" y="69" text-anchor="middle" font-family="Montserrat,Arial,sans-serif" font-weight="800" font-size="19" fill="#6EF0CF">4,0°</text>';
+    } else {
+      s += '<rect x="' + x0 + '" y="26" width="' + w0 + '" height="134" rx="14" fill="url(#' + id + 'a)" stroke="#AFC0C0"/>';
+      s += '<rect x="46" y="100" width="8" height="40" rx="4" fill="' + hnd + '"/>';
+      s += '<rect x="82" y="52" width="136" height="58" rx="10" fill="#0E2A2B"/><text x="150" y="91" text-anchor="middle" font-family="Montserrat,Arial,sans-serif" font-weight="800" font-size="27" fill="#6EF0CF">4,0°</text><text x="206" y="68" font-family="Montserrat,Arial,sans-serif" font-weight="800" font-size="10" fill="#6EF0CF">AI</text>';
+      if (v === "pro") s += '<circle cx="150" cy="130" r="7" fill="#0E2A2B"/><circle cx="150" cy="130" r="3" fill="#6EF0CF"/>';
+      if (o.anim) {
+        s += '<rect x="' + x0 + '" y="168" width="' + w0 + '" height="' + (bodyH - 182) + '" rx="12" fill="url(#' + id + 'b)"/>';
+        var rows = [196, 274, 352, 430], names = [["milk", "egg", "cheese", "apple"], ["meal", "fish", "chicken", "veg"], ["apple", "milk", "meal", "egg"], ["veg", "veg", "apple", "apple"]];
+        rows.forEach(function (y, ri) {
+          names[ri].forEach(function (n, ci) { s += '<use href="#i-' + n + '" x="' + (44 + ci * 54) + '" y="' + y + '" width="48" height="48"/>'; });
+          s += '<rect x="' + x0 + '" y="' + (y + 48) + '" width="' + w0 + '" height="5" fill="#B9D4CE"/>';
+        });
+        s += '<g class="door"><rect x="' + x0 + '" y="168" width="' + w0 + '" height="' + (bodyH - 182) + '" rx="14" fill="url(#' + id + 'a)" stroke="#AFC0C0"/><rect x="46" y="200" width="8" height="90" rx="4" fill="' + hnd + '"/></g>';
+      } else {
+        s += '<rect x="' + x0 + '" y="168" width="' + w0 + '" height="' + (bodyH - 182) + '" rx="14" fill="url(#' + id + 'a)" stroke="#AFC0C0"/><rect x="46" y="200" width="8" height="90" rx="4" fill="' + hnd + '"/>';
+      }
+    }
+    s += '<rect x="52" y="' + (H - 16) + '" width="34" height="8" rx="3" fill="#7F9393"/><rect x="' + (W - 86) + '" y="' + (H - 16) + '" width="34" height="8" rx="3" fill="#7F9393"/></svg>';
+    return s;
+  }
+  function sym(n, cls) { return '<svg class="' + (cls || "") + '" viewBox="0 0 48 48" aria-hidden="true"><use href="#i-' + n + '"/></svg>'; }
+
+  /* ---------- router ---------- */
+  var VIEWS = ["home", "models", "panel", "camera", "device", "signup", "account"];
+  var cur = "";
+  function route() {
+    var h = (location.hash || "").replace("#", "");
+    if (VIEWS.indexOf(h) < 0) h = "home";
+    if (h === cur) return;
+    cur = h;
+    $$(".view").forEach(function (v) { v.hidden = v.getAttribute("data-view") !== h; });
+    $$("#nav a").forEach(function (a) { if (a.getAttribute("data-v") === h) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current"); });
+    window.scrollTo(0, 0);
+    if (h === "panel") enterPanel();
+    if (h === "account") renderAccount();
+    if (h === "signup") enterSignup();
+    if (h === "models") renderModels();
+    if (h === "camera") enterCamera();
+    setTimeout(observe, 50);
+  }
+  window.addEventListener("hashchange", route);
+
+  /* reveal + counters */
+  var io = null;
+  function observe() {
+    if (!("IntersectionObserver" in window)) { $$(".rv").forEach(function (e) { e.classList.add("in"); }); return; }
+    if (!io) io = new IntersectionObserver(function (es) {
+      es.forEach(function (en) {
+        if (!en.isIntersecting) return;
+        en.target.classList.add("in"); io.unobserve(en.target);
+        var c = en.target.querySelector("[data-count]");
+        if (c) count(c);
+      });
+    }, { threshold: 0.15 });
+    $$(".rv:not(.in)").forEach(function (e) { io.observe(e); });
+  }
+  function count(el) {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    var to = parseFloat(el.getAttribute("data-count")), dec = +(el.getAttribute("data-dec") || 0), pre = el.getAttribute("data-pre") || "", suf = el.getAttribute("data-suf") || "", t0 = null;
+    function step(t) {
+      if (!t0) t0 = t; var p = Math.min(1, (t - t0) / 1100), e = 1 - Math.pow(1 - p, 3);
+      el.textContent = pre + (to * e).toFixed(dec).replace(".", ",") + suf;
+      if (p < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+
+  /* ---------- validation helpers ---------- */
+  var MSG = {
+    req: "Бұл жолды толтырыңыз",
+    name: "Тек әріп жазыңыз (2–30 таңба)",
+    email: "Дұрыс email жазыңыз, мысалы: name@mail.kz",
+    phone: "Нөмір 7-мен басталатын 10 саннан тұруы керек",
+    pw: "Кемінде 8 таңба, оның ішінде әріп және сан болсын",
+    pw2: "Құпия сөздер сәйкес емес",
+    sel: "Тізімнен таңдаңыз",
+    model: "Әріп, сан, сызықша жазыңыз",
+    onlyLetters: "Мұнда тек әріп жазуға болады",
+    onlyDigits: "Мұнда тек сан жазуға болады"
+  };
+  var noteTimer = {};
+  function setErr(id, msg, isNote) {
+    var e = $("err-" + id), el = $(id); if (!e) return;
+    e.textContent = msg || ""; e.className = "err" + (isNote ? " note" : "");
+    if (el && !isNote) { if (msg) el.setAttribute("aria-invalid", "true"); else el.removeAttribute("aria-invalid"); }
+  }
+  function flash(id, msg) {
+    setErr(id, msg, true); clearTimeout(noteTimer[id]);
+    noteTimer[id] = setTimeout(function () { var e = $("err-" + id); if (e && e.classList.contains("note")) setErr(id, ""); }, 2200);
+  }
+  function fmtPhone(d) {
+    var s = "";
+    if (d.length > 0) s += "(" + d.slice(0, 3);
+    if (d.length >= 3) s += ")";
+    if (d.length > 3) s += " " + d.slice(3, 6);
+    if (d.length > 6) s += "-" + d.slice(6, 8);
+    if (d.length > 8) s += "-" + d.slice(8, 10);
+    return s;
+  }
+  function validateEl(el) {
+    var r = el.getAttribute("data-rule"), v = (el.value || "").trim(), id = el.id;
+    var m = "";
+    if (r === "select") { if (!v) m = MSG.sel; }
+    else if (!v) m = MSG.req;
+    else if (r === "name") { if (!/^[\p{L}][\p{L}'’\- ]{1,29}$/u.test(v)) m = MSG.name; }
+    else if (r === "email") { if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v)) m = MSG.email; }
+    else if (r === "phone") { var d = v.replace(/\D/g, ""); if (d.length !== 10 || d[0] !== "7") m = MSG.phone; }
+    else if (r === "pw") { if (v.length < 8 || !/\p{L}/u.test(v) || !/\d/.test(v)) m = MSG.pw; }
+    else if (r === "pw2") { if (v !== $("pw").value) m = MSG.pw2; }
+    else if (r === "model") { if (!/^[\p{L}\d][\p{L}\d \-.]{0,23}$/u.test(v)) m = MSG.model; }
+    else if (r === "int") {
+      var mn = +el.getAttribute("data-min"), mx = +el.getAttribute("data-max"), n = +v;
+      if (!/^\d+$/.test(v) || n < mn || n > mx) m = mn + "–" + mx + " аралығындағы сан жазыңыз";
+    }
+    setErr(id, m);
+    if (!m && v && r !== "select") el.classList.add("ok-f"); else el.classList.remove("ok-f");
+    return !m;
+  }
+  var touched = {};
+  function wireInputs(root) {
+    $$("[data-rule]", root).forEach(function (el) {
+      var r = el.getAttribute("data-rule");
+      el.addEventListener("input", function () {
+        var before = el.value, after = before;
+        if (r === "name") { after = before.replace(/[^\p{L}'’\- ]/gu, ""); if (after !== before) flash(el.id, MSG.onlyLetters); }
+        else if (r === "int") { after = before.replace(/\D/g, ""); if (after !== before) flash(el.id, MSG.onlyDigits); }
+        else if (r === "phone") { var d = before.replace(/\D/g, ""); if (/[^\d\s()\-]/.test(before)) flash(el.id, MSG.onlyDigits); after = fmtPhone(d.slice(0, 10)); }
+        else if (r === "model") { after = before.replace(/[^\p{L}\d \-.]/gu, ""); }
+        else if (r === "email") { after = before.replace(/\s/g, ""); }
+        if (after !== before) el.value = after;
+        if (r === "pw") { meter(el.value); if (touched.pw2) validateEl($("pw2")); }
+        if (touched[el.id]) validateEl(el);
+      });
+      el.addEventListener("blur", function () { if (el.value || touched[el.id]) { touched[el.id] = 1; validateEl(el); } });
+      el.addEventListener("change", function () { if (r === "select") { touched[el.id] = 1; validateEl(el); } });
+    });
+  }
+  function meter(v) {
+    var s = 0; if (v.length >= 8) s++; if (/\p{L}/u.test(v) && /\d/.test(v)) s++; if (v.length >= 12) s++; if (/[^\p{L}\d]/u.test(v)) s++;
+    var m = $("meter"); m.style.width = (v ? Math.max(15, s * 25) : 0) + "%"; m.style.background = s <= 1 ? "var(--bad)" : s === 2 ? "var(--warn)" : "var(--ok)";
+  }
+
+  /* ---------- features ---------- */
+  var ICONS = {
+    brain: '<path d="M9 4a3 3 0 0 0-3 3 3 3 0 0 0-2 5 3 3 0 0 0 2 5 3 3 0 0 0 6 1V4a3 3 0 0 0-3 0zM15 4a3 3 0 0 1 3 3 3 3 0 0 1 2 5 3 3 0 0 1-2 5 3 3 0 0 1-6 1"/>',
+    bolt: '<path d="M13 2L4 14h7l-1 8 9-12h-7z"/>',
+    bell: '<path d="M6 17V11a6 6 0 0 1 12 0v6l2 2H4zM10 21a2 2 0 0 0 4 0"/>',
+    shield: '<path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M8.5 12l2.5 2.5L16 9.5"/>',
+    door: '<rect x="5" y="3" width="14" height="18" rx="2"/><path d="M15 11v3"/>',
+    list: '<path d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01"/>',
+    gas: '<path d="M4 9c3-3 5 3 8 0s5 3 8 0M4 15c3-3 5 3 8 0s5 3 8 0"/>',
+    chart: '<path d="M4 20V4M4 20h16M8 16v-4M12 16V8M16 16v-6"/>',
+    camera: '<path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.500"/>',
+    users: '<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c0-4 3-6 6.5-6s6.500 2 6.500 6M16 4.500a3.500 3.500 0 0 1 0 7M18 14c2.500.7 3.500 2.700 3.500 6"/>'
+  };
+  var FEATS = [
+    ["brain", "AI болжам", "Әр өнімнің қалған сақталу мерзімін күнмен болжайды.", 1],
+    ["bolt", "Электр үнемі", "Барлық өнім қауіпсіз болатын ең жоғары температураны таңдайды.", 1],
+    ["shield", "Қауіпсіздік шегі", "Ет пен балық үшін температура шегі қатаң, үнемге бола бұзылмайды.", 1],
+    ["list", "Өнім тізімі", "Өнімдерді қосыңыз, сақталған күнін көріп отырыңыз.", 1],
+    ["door", "Есік әсері", "Есік қаншалықты жиі ашылса, болжам соншалықты дәл түзетіледі.", 1],
+    ["bell", "Ақылды хабарлама", "Telegram, WhatsApp немесе email арқылы «бүгін жеңіз» ескертуі.", 0],
+    ["gas", "Газ датчигі", "NH₃ және VOC деңгейі бойынша бұзылуды ерте байқайды.", 0],
+    ["chart", "Шығын есебі", "Күн мен ай бойынша электр шығыны және үнем есебі.", 0],
+    ["camera", "Ішкі камера және AI аспаз", "Камера тоңазытқыштағы өнімдерді көріп, олардан не дайындауға болатынын ұсынады.", 1]
+  ];
+  $("features").innerHTML = FEATS.map(function (f) {
+    return '<div class="card feat rv"><div class="ic"><svg viewBox="0 0 24 24">' + ICONS[f[0]] + '</svg></div><h3>' + f[1] + '</h3><p>' + f[2] + '</p><span class="tag ' + (f[3] ? "now" : "soon") + '">' + (f[3] ? "Демода бар" : "Жоспарда") + '</span></div>';
+  }).join("");
+
+  /* hero scene */
+  $("hero-scene").insertAdjacentHTML("afterbegin", fridge({ variant: "home", anim: true, color: "Күміс" }));
+
+  /* ---------- models ---------- */
+  var MODELS = [
+    { id: "m1", name: "Салқын Mini M1", v: "mini", l: 180, cls: "A++", sens: 4, who: "1–2 адам", min: 1, max: 2, feat: "Сүт пен көкөніс режимі" },
+    { id: "h2", name: "Салқын Home H2", v: "home", l: 320, cls: "A+++", sens: 8, who: "3–4 адам", min: 3, max: 4, feat: "Telegram хабарламасы" },
+    { id: "p3", name: "Салқын Pro P3", v: "pro", l: 450, cls: "A+++", sens: 12, who: "5–6 адам", min: 5, max: 6, feat: "Газ датчигі, ішкі камера" },
+    { id: "x4", name: "Салқын Max X4", v: "max", l: 600, cls: "A+++", sens: 16, who: "7 адам және одан көп", min: 7, max: 99, feat: "Екі аймақты салқындату" }
+  ];
+  var recId = "";
+  function renderModels() {
+    $("models").innerHTML = MODELS.map(function (m) {
+      return '<div class="card model' + (recId === m.id ? " rec" : "") + '">' + (recId === m.id ? '<span class="reco">Сізге лайық</span>' : "") +
+        '<div class="pic">' + fridge({ variant: m.v }) + '</div><h3>' + m.name + '</h3>' +
+        '<ul><li><b>' + m.l + ' л</b> · ' + m.who + '</li><li>Энергия класы: <b>' + m.cls + '</b></li><li>Сенсор саны: <b>' + m.sens + '</b></li><li>' + m.feat + '</li></ul>' +
+        '<button class="btn primary sm" type="button" data-pick="' + m.id + '">Таңдау</button></div>';
+    }).join("");
+    $$("[data-pick]").forEach(function (b) { b.addEventListener("click", function () { pickModel = b.getAttribute("data-pick"); location.hash = "#signup"; }); });
+  }
+  var pickModel = "";
+  var fp = $("f-people");
+  fp.addEventListener("input", function () {
+    var v = fp.value.trim(), n = +v;
+    if (!v || !/^\d+$/.test(v) || n < 1 || n > 20) { recId = ""; $("f-result").textContent = v ? "1–20 аралығындағы сан жазыңыз." : "Санды жазсаңыз, ұсынылатын модель белгіленеді."; }
+    else { var m = MODELS.filter(function (x) { return n >= x.min && n <= x.max; })[0]; recId = m.id; $("f-result").innerHTML = "<b style=\"color:var(--fg)\">" + n + " адамға ұсынылады:</b> " + m.name + ", " + m.l + " л."; }
+    renderModels();
+  });
+
+  /* ---------- core model ---------- */
+  var BASE = [
+    { id: "milk", name: "Сүт (ашылған)", L: 7, maxT: 5, on: true, days: 3, icon: "milk" },
+    { id: "chicken", name: "Шикі тауық еті", L: 2, maxT: 4, on: false, days: 1, icon: "chicken" },
+    { id: "fish", name: "Шикі балық", L: 1.5, maxT: 3, on: false, days: 0, icon: "fish" },
+    { id: "meal", name: "Піскен тағам", L: 4, maxT: 5, on: true, days: 1, icon: "meal" },
+    { id: "veg", name: "Көкөніс", L: 7, maxT: 8, on: true, days: 4, icon: "veg" },
+    { id: "apple", name: "Алма", L: 28, maxT: 8, on: true, days: 10, icon: "apple" }
+  ];
+  var P = BASE.map(function (p) { return Object.assign({}, p); });
+  var S = { room: 24, doors: 20, manual: 4 };
+  function teff(s, room, doors) { return s + 0.0025 * doors * Math.max(0, room - s); }
+  function rate(T) { return Math.pow(3, (T - 4) / 10); }
+  function remainC(p, s, room, doors) { return p.L / rate(teff(s, room, doors)) - p.days; }
+  function energyC(s, room) { return (room - s) / (room - 2) * 100; }
+  function optimizeC(items, room, doors) {
+    if (!items.length) return { s: 6, urgent: [], limiter: null };
+    var urgent = items.filter(function (p) { return remainC(p, 0, room, doors) < 1; });
+    var bound = items.filter(function (p) { return urgent.indexOf(p) < 0; });
+    var best = 0, limiter = null, s;
+    for (s = 0; s <= 10; s += 0.5) {
+      var ok = bound.every(function (p) { return teff(s, room, doors) <= p.maxT && remainC(p, s, room, doors) >= 1; });
+      if (ok) best = s; else break;
+    }
+    if (best < 10) limiter = bound.filter(function (p) { var n = best + 0.5; return teff(n, room, doors) > p.maxT || remainC(p, n, room, doors) < 1; })[0] || null;
+    return { s: best, urgent: urgent, limiter: limiter };
+  }
+  function remain(p, s) { return remainC(p, s, S.room, S.doors); }
+  function status(p, s) {
+    var r = remain(p, s);
+    if (teff(s, S.room, S.doors) > p.maxT) return { c: "bad", t: "тым жылы", r: r };
+    if (r <= 0) return { c: "bad", t: "бұзылған", r: r };
+    if (r < 1) return { c: "warn", t: "бүгін", r: r };
+    if (r < 2) return { c: "warn", t: "жақында", r: r };
+    return { c: "ok", t: "жақсы", r: r };
+  }
+
+  /* ---------- panel ---------- */
+  var cid = 0;
+  function buildRows() {
+    var tb = $("rows"); tb.innerHTML = "";
+    P.forEach(function (p) {
+      var mx = Math.min(30, Math.ceil(p.L)), tr = document.createElement("tr");
+      tr.className = "pitem";
+      tr.innerHTML = '<td><label class="pn"><input type="checkbox" id="on-' + p.id + '"' + (p.on ? " checked" : "") + ' aria-label="' + esc(p.name) + '">' + sym(p.icon) + '<span>' + esc(p.name) + '</span></label></td>' +
+        '<td><div class="days"><input type="range" id="days-' + p.id + '" min="0" max="' + mx + '" step="1" value="' + Math.min(p.days, mx) + '" aria-label="Сақталған күн: ' + esc(p.name) + '"><span id="dv-' + p.id + '"></span></div></td>' +
+        '<td id="m-' + p.id + '"></td><td id="a-' + p.id + '"></td><td>' + (p.custom ? '<button class="rm" type="button" id="rm-' + p.id + '" aria-label="Өшіру">×</button>' : "") + '</td>';
+      tb.appendChild(tr);
+      $("on-" + p.id).addEventListener("change", function (e) { p.on = e.target.checked; updatePanel(); });
+      $("days-" + p.id).addEventListener("input", function (e) { p.days = +e.target.value; updatePanel(); });
+      if (p.custom) $("rm-" + p.id).addEventListener("click", function () { P = P.filter(function (x) { return x !== p; }); buildRows(); updatePanel(); });
+    });
+  }
+  function cell(p, s) {
+    if (!p.on) return '<span class="pill off">жоқ</span>';
+    var st = status(p, s);
+    return '<b class="num">' + (st.r > 0 ? f1(st.r) + " күн" : "0") + '</b> <span class="pill ' + st.c + '">' + st.t + '</span>';
+  }
+  function svgChart(el, o) {
+    var W = 320, H = 190, m = { l: 34, r: 10, t: 12, b: 30 }, pw = W - m.l - m.r, ph = H - m.t - m.b;
+    function X(x) { return m.l + x / 10 * pw; }
+    function Y(y) { return m.t + ph - (Math.min(o.ymax, Math.max(o.ymin, y)) - o.ymin) / (o.ymax - o.ymin) * ph; }
+    var g = "", i;
+    for (i = 0; i <= 4; i++) { var yv = o.ymin + (o.ymax - o.ymin) * i / 4; g += '<line class="ax" x1="' + m.l + '" x2="' + (W - m.r) + '" y1="' + Y(yv) + '" y2="' + Y(yv) + '"/><text class="ct" x="' + (m.l - 5) + '" y="' + (Y(yv) + 3) + '" text-anchor="end">' + Math.round(yv) + '</text>'; }
+    for (i = 0; i <= 10; i += 2) g += '<text class="ct" x="' + X(i) + '" y="' + (H - 14) + '" text-anchor="middle">' + i + '</text>';
+    g += '<text class="ct" x="' + (m.l + pw / 2) + '" y="' + (H - 2) + '" text-anchor="middle">температура, °C</text>';
+    if (o.shade !== null && o.shade < 10) g += '<rect class="shade" x="' + X(o.shade + 0.25) + '" y="' + m.t + '" width="' + (X(10) - X(o.shade + 0.25)) + '" height="' + ph + '"/>';
+    g += '<path class="ln" d="' + o.pts.map(function (p, k) { return (k ? "L" : "M") + X(p[0]).toFixed(1) + " " + Y(p[1]).toFixed(1); }).join("") + '"/>';
+    g += '<line class="mk-man" x1="' + X(S.manual) + '" x2="' + X(S.manual) + '" y1="' + m.t + '" y2="' + (m.t + ph) + '"/>';
+    if (o.ai !== null) {
+      g += '<line class="mk-ai" x1="' + X(o.ai) + '" x2="' + X(o.ai) + '" y1="' + m.t + '" y2="' + (m.t + ph) + '"/><circle class="dot-ai" cx="' + X(o.ai) + '" cy="' + Y(o.f(o.ai)) + '" r="4.5"/>';
+      g += '<text class="ct" x="' + Math.min(W - 24, X(o.ai) + 5) + '" y="' + (m.t + 9) + '" style="fill:var(--brand);font-weight:700">AI</text>';
+    }
+    el.innerHTML = g;
+  }
+  function updatePanel() {
+    S.room = +$("room").value; S.doors = +$("doors").value; S.manual = +$("manual").value;
+    $("room-v").textContent = S.room + " °C"; $("doors-v").textContent = S.doors; $("manual-v").textContent = f1(S.manual) + " °C";
+    var act = P.filter(function (p) { return p.on; }), opt = optimizeC(act, S.room, S.doors);
+    P.forEach(function (p) { $("dv-" + p.id).textContent = p.days; $("m-" + p.id).innerHTML = cell(p, S.manual); $("a-" + p.id).innerHTML = cell(p, opt.s); });
+    var eMan = energyC(S.manual, S.room), eAi = energyC(opt.s, S.room);
+    [["fixed", 100], ["manual", eMan], ["ai", eAi]].forEach(function (a) { $("f-" + a[0]).style.width = Math.max(0, Math.min(100, a[1] / 130 * 100)) + "%"; $("v-" + a[0]).textContent = Math.round(a[1]) + " %"; });
+    var save = 100 - eAi;
+    $("k-set").textContent = f1(opt.s) + " °C";
+    $("k-save").textContent = (save >= 0 ? "" : "−") + Math.abs(Math.round(save)) + " %";
+    $("k-urg").textContent = act.length ? opt.urgent.length + " / " + act.length : "0";
+    var mn = act.length ? Math.min.apply(null, act.map(function (p) { return remainC(p, opt.s, S.room, S.doors); })) : null;
+    $("k-min").textContent = mn === null ? "–" : (mn > 0 ? f1(mn) + " күн" : "0");
+    var adv;
+    if (!act.length) adv = "Тоңазытқыш бос. Өнім қосыңыз, AI температураны есептейді.";
+    else {
+      var diff = Math.round(eAi - eMan);
+      adv = "AI температураны " + f1(opt.s) + " °C-қа қояды. Қолмен қойылған " + f1(S.manual) + " °C-пен салыстырғанда электр шығыны " + (diff > 0 ? "+" : "") + diff + " % өзгереді.";
+      var soon = act.filter(function (p) { return remainC(p, opt.s, S.room, S.doors) < 2; }).map(function (p) { return p.name; });
+      if (soon.length) adv += " Бірінші пайдаланыңыз: " + soon.join(", ") + ".";
+      if (opt.limiter) adv += " Шектеуші өнім: " + opt.limiter.name + ". Температураны жоғарылатсақ, ол қауіпсіз шектен шығады.";
+      var hot = act.filter(function (p) { return teff(S.manual, S.room, S.doors) > p.maxT; })[0];
+      if (hot) adv += " Қолмен қойылған температура «" + hot.name + "» үшін тым жоғары: ішкі температура " + f1(teff(S.manual, S.room, S.doors)) + " °C болады.";
+    }
+    $("advice").textContent = adv;
+    var p1 = [], p2 = [], s, ymax = 4;
+    for (s = 0; s <= 10; s += 0.5) {
+      var v = act.length ? Math.min.apply(null, act.map(function (p) { return remain(p, s); })) : 0;
+      p1.push([s, v]); p2.push([s, energyC(s, S.room)]); if (v > ymax) ymax = v;
+    }
+    ymax = Math.min(12, Math.ceil(ymax / 4) * 4);
+    svgChart($("c1"), { pts: p1, ymin: 0, ymax: ymax, ai: act.length ? opt.s : null, shade: act.length && opt.s < 10 ? opt.s : null, f: function (x) { return act.length ? Math.min.apply(null, act.map(function (p) { return remain(p, x); })) : 0; } });
+    svgChart($("c2"), { pts: p2, ymin: 60, ymax: 120, ai: opt.s, shade: null, f: function (x) { return energyC(x, S.room); } });
+  }
+  ["room", "doors", "manual"].forEach(function (id) { $(id).addEventListener("input", updatePanel); });
+  wireInputs($("np-name").closest(".addp"));
+  $("np-add").addEventListener("click", function () {
+    var ok = ["np-name", "np-days", "np-max"].map(function (id) { touched[id] = 1; return validateEl($(id)); }).every(Boolean);
+    if (!ok) return;
+    cid++;
+    P.push({ id: "c" + cid, name: $("np-name").value.trim(), L: +$("np-days").value, maxT: +$("np-max").value, on: true, days: 0, icon: "meal", custom: true });
+    ["np-name", "np-days", "np-max"].forEach(function (id) { $(id).value = ""; $(id).classList.remove("ok-f"); touched[id] = 0; });
+    buildRows(); updatePanel();
+  });
+  var panelBuilt = false;
+  function enterPanel() {
+    var u = loadUser();
+    if (u) {
+      $("room").value = u.room; $("doors").value = u.doors;
+      $("pbadge").hidden = false; $("pbadge").textContent = "Сіздің тоңазытқышыңыз: " + fridgeName(u);
+      var map = { dairy: "milk", meat: "chicken", fish: "fish", veg: "veg", fruit: "apple", cooked: "meal" };
+      P.filter(function (p) { return !p.custom; }).forEach(function (p) { p.on = u.types.some(function (t) { return map[t] === p.id; }); });
+    } else $("pbadge").hidden = true;
+    buildRows(); updatePanel(); panelBuilt = true;
+  }
+
+  /* ---------- calculator ---------- */
+  var kin = ["k-waste", "k-price", "k-kwh", "k-tariff"];
+  wireInputs($("k-waste").closest(".calc"));
+  function calc() {
+    var okAll = kin.every(function (id) { return /^\d+$/.test($(id).value) && +$(id).value >= +$(id).getAttribute("data-min") && +$(id).value <= +$(id).getAttribute("data-max"); });
+    if (!okAll) return;
+    var cut = +$("k-cut").value / 100, food = +$("k-waste").value * 12 * cut, kwh = +$("k-kwh").value * 0.09;
+    var money = food * +$("k-price").value + kwh * +$("k-tariff").value;
+    $("r-money").textContent = Math.round(money).toLocaleString("ru-RU").replace(/ /g, " ") + " ₸";
+    $("r-food").textContent = f1(food) + " кг"; $("r-kwh").textContent = f1(kwh) + " кВт·сағ";
+  }
+  kin.concat(["k-cut"]).forEach(function (id) { $(id).addEventListener("input", calc); $(id).addEventListener("change", calc); });
+  calc();
+
+  /* ---------- signup ---------- */
+  var TYPES = [["dairy", "Сүт өнімдері", "milk"], ["meat", "Ет, құс еті", "chicken"], ["fish", "Балық", "fish"], ["veg", "Көкөніс", "veg"], ["fruit", "Жеміс", "apple"], ["cooked", "Піскен тағам", "meal"]];
+  var CHANS = [["tg", "Telegram"], ["wa", "WhatsApp"], ["em", "Email"], ["sms", "SMS"]];
+  $("types").innerHTML = TYPES.map(function (t) { return '<label class="opt"><input type="checkbox" name="types" value="' + t[0] + '"><div class="box"><span class="chk">✓</span>' + sym(t[2], "mini").replace('class="mini"', 'class="mini" style="width:34px;height:34px"') + '<b>' + t[1] + '</b></div></label>'; }).join("");
+  $("channels").innerHTML = CHANS.map(function (c) { return '<label class="opt"><input type="checkbox" name="channels" value="' + c[0] + '"><div class="box"><span class="chk">✓</span><b>' + c[1] + '</b></div></label>'; }).join("");
+  $("model-opts").innerHTML = MODELS.map(function (m) { return '<label class="opt"><input type="radio" name="model" value="' + m.id + '"><div class="box"><span class="chk">✓</span><div><b>' + m.name + '</b><small>' + m.l + ' л · ' + m.who + '</small></div></div></label>'; }).join("");
+  wireInputs($("form"));
+  $$("[data-show]").forEach(function (b) {
+    b.addEventListener("click", function () { var el = $(b.getAttribute("data-show")), show = el.type === "password"; el.type = show ? "text" : "password"; b.textContent = show ? "Жасыру" : "Көрсету"; });
+  });
+  var step = 1;
+  function modeVal() { return $$('input[name="mode"]').filter(function (r) { return r.checked; })[0].value; }
+  function syncMode() { var own = modeVal() === "own"; $("mode-own").hidden = !own; $("mode-new").hidden = own; }
+  $$('input[name="mode"]').forEach(function (r) { r.addEventListener("change", syncMode); });
+  function showStep(n) {
+    step = n;
+    $$(".stepbox[data-step]").forEach(function (b) { b.hidden = +b.getAttribute("data-step") !== n; });
+    $$("#progress div").forEach(function (d, i) { d.className = i + 1 === n ? "on" : i + 1 < n ? "done" : ""; });
+    $("back").hidden = n === 1;
+    $("next").textContent = n === 3 ? "Тіркелуді аяқтау" : "Келесі қадам";
+    $("done").hidden = true; $("actions").hidden = false; $("progress").hidden = false;
+    var top = $("form").getBoundingClientRect().top + window.scrollY - 110; window.scrollTo({ top: Math.max(0, top), behavior: "smooth" });
+  }
+  function checked(name) { return $$('input[name="' + name + '"]').filter(function (r) { return r.checked; }).map(function (r) { return r.value; }); }
+  function validateStep(n) {
+    var box = $$('.stepbox[data-step="' + n + '"]')[0], ok = true, first = null;
+    $$("[data-rule]", box).forEach(function (el) {
+      var f = el.getAttribute("data-for");
+      if (f && ((f === "own") !== (modeVal() === "own"))) return;
+      touched[el.id] = 1;
+      if (!validateEl(el)) { ok = false; if (!first) first = el; }
+    });
+    if (n === 2 && modeVal() === "new" && !checked("model").length) { setErr("model", "Модельді таңдаңыз"); ok = false; } else if (n === 2) setErr("model", "");
+    if (n === 3) {
+      if (!checked("types").length) { setErr("types", "Кемінде бір өнім түрін таңдаңыз"); ok = false; } else setErr("types", "");
+      if (!checked("channels").length) { setErr("channels", "Кемінде бір арнаны таңдаңыз"); ok = false; } else setErr("channels", "");
+      if (!$("agree").checked) { setErr("agree", "Келісім қажет"); ok = false; } else setErr("agree", "");
+    }
+    if (first) first.focus();
+    return ok;
+  }
+  $("next").addEventListener("click", function () {
+    if (!validateStep(step)) return;
+    if (step < 3) showStep(step + 1); else finish();
+  });
+  $("back").addEventListener("click", function () { showStep(step - 1); });
+  $("form").addEventListener("submit", function (e) { e.preventDefault(); });
+  function enterSignup() {
+    syncMode();
+    if (pickModel) {
+      $$('input[name="mode"]').forEach(function (r) { r.checked = r.value === "new"; }); syncMode();
+      $$('input[name="model"]').forEach(function (r) { r.checked = r.value === pickModel; });
+    }
+    if (!$("done").hidden) return;
+    var u = loadUser();
+    if (u && step === 1 && !$("fn").value) { $("done").hidden = true; }
+  }
+  function finish() {
+    var own = modeVal() === "own";
+    var u = {
+      fn: $("fn").value.trim(), ln: $("ln").value.trim(), email: $("email").value.trim(), phone: "+7 " + $("phone").value.trim(), city: $("city").value,
+      mode: own ? "own" : "new",
+      fridge: own ? { brand: $("brand").value, mname: $("mname").value.trim(), year: $("year").value, vol: $("vol").value, ftype: $("ftype").value } : { model: checked("model")[0], color: checked("color")[0] },
+      people: +$("people").value, room: +$("room-s").value, doors: +$("doors-s").value,
+      types: checked("types"), channels: checked("channels"), auto: $("auto").checked
+    };
+    sset("salqyn-user", JSON.stringify(u));
+    refreshAuth();
+    $$(".stepbox[data-step]").forEach(function (b) { b.hidden = true; });
+    $("progress").hidden = true; $("actions").hidden = true; $("done").hidden = false;
+    $("done-text").textContent = u.fn + ", тоңазытқышыңыз профильге қосылды: " + fridgeName(u) + ". Енді AI панельде ұсынылған температураны көре аласыз.";
+    pickModel = "";
+  }
+
+  /* ---------- account ---------- */
+  function loadUser() { try { var s = sget("salqyn-user"); return s ? JSON.parse(s) : null; } catch (e) { return null; } }
+  function modelOf(id) { return MODELS.filter(function (m) { return m.id === id; })[0]; }
+  function fridgeName(u) {
+    if (u.mode === "new") { var m = modelOf(u.fridge.model); return m ? m.name + ", " + u.fridge.color : "Салқын AI"; }
+    return u.fridge.brand + (u.fridge.mname ? " " + u.fridge.mname : "") + ", " + u.fridge.vol + " л";
+  }
+  function refreshAuth() {
+    var b = $("auth-btn"), u = loadUser();
+    if (u) { b.textContent = u.fn; b.setAttribute("href", "#account"); } else { b.textContent = "Тіркелу"; b.setAttribute("href", "#signup"); }
+  }
+  function renderAccount() {
+    var u = loadUser(), root = $("account-root");
+    if (!u) { root.innerHTML = '<div class="empty"><h2>Кабинет бос</h2><p style="color:var(--muted)">Алдымен тіркеліп, тоңазытқышыңызды қосыңыз.</p><a class="btn primary" href="#signup">Тіркелу</a></div>'; return; }
+    var map = { dairy: "milk", meat: "chicken", fish: "fish", veg: "veg", fruit: "apple", cooked: "meal" };
+    var items = BASE.filter(function (p) { return u.types.some(function (t) { return map[t] === p.id; }); }).map(function (p) { return Object.assign({}, p); });
+    var opt = optimizeC(items, u.room, u.doors), sv = Math.round(100 - energyC(opt.s, u.room));
+    var m = u.mode === "new" ? modelOf(u.fridge.model) : null;
+    var rows = [["Қала", u.city], ["Email", u.email], ["Телефон", u.phone], ["Отбасы мүшесі", u.people], ["Есік ашу, тәулігіне", u.doors], ["Бөлме температурасы", u.room + " °C"], ["Хабарлама", u.channels.map(function (c) { return CHANS.filter(function (x) { return x[0] === c; })[0][1]; }).join(", ")], ["Автоматты режим", u.auto ? "қосулы" : "өшірулі"]];
+    if (u.mode === "own") rows.unshift(["Тоңазытқыш", fridgeName(u) + ", " + u.fridge.year + " ж., " + u.fridge.ftype]);
+    var typeNames = u.types.map(function (t) { return TYPES.filter(function (x) { return x[0] === t; })[0][1]; });
+    root.innerHTML =
+      '<div class="sec-head"><div class="avatar" aria-hidden="true">' + esc(u.fn.charAt(0).toUpperCase()) + '</div><h1 style="font-size:clamp(1.9rem,4.5vw,2.8rem)">Сәлем, ' + esc(u.fn) + '</h1><p>Міне, сіздің тоңазытқышыңыз бен AI ұсынысы.</p></div>' +
+      '<div class="kpis"><div class="kpi main"><span>AI ұсынған температура</span><b>' + f1(opt.s) + ' °C</b></div><div class="kpi"><span>Электр үнемі (2 °C-қа қарағанда)</span><b>' + (sv >= 0 ? "" : "−") + Math.abs(sv) + ' %</b></div><div class="kpi"><span>Өнім түрлері</span><b>' + u.types.length + '</b></div><div class="kpi"><span>Тез пайдалану керек</span><b>' + opt.urgent.length + '</b></div></div>' +
+      '<div class="acc"><div class="card"><div class="pic" style="background:linear-gradient(160deg,var(--brand-soft),var(--surface2));border-radius:16px;padding:16px;display:grid;place-items:center;height:300px">' + fridge({ variant: m ? m.v : "home", color: u.mode === "new" ? u.fridge.color : "Күміс" }).replace('class="fr"', 'class="fr" style="height:100%;width:auto"') + '</div><h3 style="margin-top:16px">' + esc(fridgeName(u)) + '</h3><p style="color:var(--muted);font-size:.95rem;margin-top:4px">' + (m ? m.l + " л · энергия класы " + m.cls + " · " + m.sens + " сенсор" : "Қолданыстағы тоңазытқыш") + '</p></div>' +
+      '<div class="card"><h3>Профиль</h3><dl class="dl">' + rows.map(function (r) { return "<dt>" + r[0] + "</dt><dd>" + esc(r[1]) + "</dd>"; }).join("") + '<dt>Өнімдер</dt><dd>' + esc(typeNames.join(", ")) + '</dd></dl>' +
+      '<div class="hero-cta"><a class="btn primary sm" href="#panel">AI панельді ашу</a><button class="btn ghost sm" type="button" id="logout">Шығу</button></div></div></div>';
+    $("logout").addEventListener("click", function () { sdel("salqyn-user"); refreshAuth(); renderAccount(); });
+  }
+
+  /* ---------- camera and AI chef ---------- */
+  var CP = [
+    { id: "milk", n: "Сүт", w: 2 }, { id: "egg", n: "Жұмыртқа", w: 1 }, { id: "cheese", n: "Ірімшік", w: 1 }, { id: "butter", n: "Сары май", w: 0 },
+    { id: "yogurt", n: "Йогурт", w: 2 }, { id: "chicken", n: "Тауық еті", w: 3 }, { id: "beef", n: "Сиыр еті", w: 2 }, { id: "fish", n: "Балық", w: 3 },
+    { id: "tomato", n: "Қызанақ", w: 1 }, { id: "cucumber", n: "Қияр", w: 1 }, { id: "carrot", n: "Сәбіз", w: 0 }, { id: "veg", n: "Брокколи", w: 1 },
+    { id: "apple", n: "Алма", w: 0 }, { id: "lemon", n: "Лимон", w: 0 }, { id: "bread", n: "Нан", w: 1 }
+  ];
+  function cpFind(id) { return CP.filter(function (p) { return p.id === id; })[0]; }
+  function cpName(id) { var f = cpFind(id); return f ? f.n : id; }
+  function cpW(id) { var w = urgW(id); return w < 0 ? 0 : w; }
+  var BRANDS = { samsung: "Samsung RB37", lg: "LG GA-B509" };
+  var MEALS = { b: "Таңғы ас", l: "Түскі ас", d: "Кешкі ас", s: "Десерт" };
+  var SAMPLE = ["milk", "egg", "cheese", "tomato", "chicken", "apple"];
+  var SAMPLE_DAYS = { milk: 3, egg: 5, cheese: 6, tomato: 3, chicken: 1, apple: 10 };
+  var CAM = { brand: "samsung", sel: SAMPLE.slice(), custom: [], open: true, last: "", n: 0, tab: "all", serv: 2, init: false, days: { milk: 3, egg: 5, cheese: 6, tomato: 3, chicken: 1, apple: 10 } };
+  var RECIPES = [
+    { n: "Қызанақты омлет", t: ["b"], time: "12 минут", req: ["egg"], opt: ["tomato", "cheese", "milk"],
+      look: { c: "plate", base: "omelet", g: ["tomato", "cheese"] },
+      am: [["egg", "Жұмыртқа", 3, "дана"], ["milk", "Сүт", 50, "мл", 1], ["tomato", "Қызанақ", 1, "дана", 1], ["cheese", "Ірімшік", 30, "г", 1], [null, "Өсімдік майы", 1, "шай қасық"], [null, "Тұз", 0.25, "шай қасық"]],
+      st: [["Қызанақты 1 см текшелеп тураңыз, ірімшікті үгіңіз.", 3], ["Жұмыртқаны сүт және тұзбен шанышқымен шайқаңыз.", 1], ["Табаны қыздырып май құйыңыз, қызанақты қуырыңыз.", 2], ["Жұмыртқа қоспасын құйып, орташа отта ұстаңыз.", 2], ["Ірімшік себіп, қақпақпен жауыңыз, екі бүктеп беріңіз.", 2]] },
+    { n: "Жұмыртқалы тост", t: ["b"], time: "10 минут", req: ["egg", "bread"], opt: ["cheese", "butter", "tomato"],
+      look: { c: "plate", g: ["bread", "egg", "tomato"] },
+      am: [["bread", "Нан", 4, "тілім"], ["egg", "Жұмыртқа", 2, "дана"], ["butter", "Сары май", 1, "ас қасық", 1], ["cheese", "Ірімшік", 40, "г", 1], ["tomato", "Қызанақ", 0.5, "дана", 1], [null, "Тұз", 0.25, "шай қасық"]],
+      st: [["Сары майдың жартысын табада ерітіп, нанды әр жағынан қуырыңыз.", 3], ["Қалған майға жұмыртқаны сындырып қуырыңыз.", 3], ["Нанның үстіне ірімшік пен қызанақ тілімін салыңыз.", 1], ["Үстіне жұмыртқаны қойып, тұз себіңіз.", 1]] },
+    { n: "Ірімшікті бутерброд", t: ["b"], time: "5 минут", req: ["bread", "cheese"], opt: ["butter", "tomato", "cucumber"],
+      look: { c: "plate", g: ["bread", "cheese", "cucumber"] },
+      am: [["bread", "Нан", 4, "тілім"], ["cheese", "Ірімшік", 80, "г"], ["butter", "Сары май", 20, "г", 1], ["tomato", "Қызанақ", 1, "дана", 1], ["cucumber", "Қияр", 1, "дана", 1]],
+      st: [["Нанға жұқа етіп сары май жағыңыз.", 1], ["Ірімшік пен көкөністі жұқа тілімдеңіз.", 2], ["Нанның үстіне ірімшік, қызанақ және қияр салып, екінші тілімен жабыңыз.", 2]] },
+    { n: "Сүтті күріш ботқасы", t: ["b"], time: "35 минут", req: ["milk"], opt: ["butter", "apple"],
+      look: { c: "bowl", f: "#F8EFD9", steam: 1, g: ["apple", "butter"] },
+      am: [["milk", "Сүт", 400, "мл"], [null, "Күріш", 80, "г"], [null, "Су", 200, "мл"], [null, "Қант", 1, "ас қасық"], [null, "Тұз", 0.25, "шай қасық"], ["butter", "Сары май", 10, "г", 1], ["apple", "Алма", 1, "дана", 1]],
+      st: [["Күрішті жуып, суға салып қайнатыңыз.", 10], ["Сүт, қант және тұз қосып, аз отта араластырыңыз.", 20], ["Сары май салып, қақпақпен демдеп қойыңыз.", 5], ["Алманы кішкене турап, үстіне салыңыз.", 2]] },
+    { n: "Йогурт пен алма тостағаны", t: ["b", "s"], time: "5 минут", req: ["yogurt", "apple"], opt: ["lemon"],
+      look: { c: "bowl", f: "#FFFFFF", g: ["yogurt", "apple"] },
+      am: [["yogurt", "Йогурт", 300, "г"], ["apple", "Алма", 1, "дана"], ["lemon", "Лимон шырыны", 1, "шай қасық", 1], [null, "Бал немесе қант", 1, "шай қасық", 1]],
+      st: [["Алманы жуып, кішкене текшелеп тураңыз.", 2], ["Қараюы үшін лимон шырынын тамызыңыз.", 1], ["Тостағанға йогурт құйып, үстіне алманы салыңыз.", 2]] },
+    { n: "Блин", t: ["b", "s"], time: "30 минут", req: ["milk", "egg"], opt: ["butter", "apple"],
+      look: { c: "plate", base: "pancake", g: ["butter", "apple"] },
+      am: [["milk", "Сүт", 300, "мл"], ["egg", "Жұмыртқа", 2, "дана"], [null, "Ұн", 150, "г"], [null, "Қант", 1, "ас қасық"], [null, "Тұз", 0.25, "шай қасық"], [null, "Өсімдік майы", 2, "ас қасық"], ["butter", "Сары май", 10, "г", 1]],
+      st: [["Жұмыртқа, қант және тұзды араластырыңыз.", 2], ["Сүт құйып, ұнды елеп қосыңыз, кесексіз біртекті қамыр жасаңыз.", 4], ["Бір ас қасық май қосып, қамырды демдеп қойыңыз.", 10], ["Қыздырылған майланған табаға ағаш қасықпен қамыр құйып, әр жағын қуырыңыз.", 10], ["Дайын блинге сары май жағып беріңіз.", 1]] },
+    { n: "Көкөніс салаты", t: ["l", "d"], time: "10 минут", req: ["tomato", "cucumber"], opt: ["lemon", "cheese"],
+      look: { c: "bowl", f: "#DDF2D1", g: ["tomato", "cucumber", "cheese"] },
+      am: [["tomato", "Қызанақ", 2, "дана"], ["cucumber", "Қияр", 2, "дана"], ["cheese", "Ірімшік", 40, "г", 1], ["lemon", "Лимон шырыны", 1, "ас қасық", 1], [null, "Өсімдік майы", 1, "ас қасық"], [null, "Тұз", 0.5, "шай қасық"]],
+      st: [["Көкөністі жуып, текшелеп тураңыз.", 4], ["Ірімшікті үгіп, көкөністің үстіне салыңыз.", 1], ["Май, лимон шырыны және тұзды араластырып құйыңыз.", 1], ["Салатты 5 минут тұрғызып беріңіз.", 5]] },
+    { n: "Тауық сорпасы", t: ["l"], time: "60 минут", req: ["chicken", "carrot"], opt: ["tomato"],
+      look: { c: "bowl", f: "#E8A93C", steam: 1, g: ["chicken", "carrot"] },
+      am: [["chicken", "Тауық еті", 400, "г"], ["carrot", "Сәбіз", 1, "дана"], [null, "Картоп", 2, "дана"], ["tomato", "Қызанақ", 1, "дана", 1], [null, "Су", 1200, "мл"], [null, "Тұз", 1, "шай қасық"]],
+      st: [["Етті суға салып қайнатыңыз, көбігін алыңыз.", 10], ["Аз отта етті жұмсарғанша пісіріңіз.", 25], ["Сәбіз бен картопты текшелеп салыңыз.", 15], ["Қызанақ пен тұзды қосып, 5 минут қайнатыңыз.", 5]] },
+    { n: "Макарон ірімшікпен", t: ["l"], time: "20 минут", req: ["cheese"], opt: ["milk", "butter"],
+      look: { c: "plate", base: "mound", f: "#F6D77A", g: ["cheese", "butter"] },
+      am: [[null, "Макарон", 200, "г"], ["cheese", "Ірімшік", 100, "г"], ["milk", "Сүт", 150, "мл", 1], ["butter", "Сары май", 1, "ас қасық", 1], [null, "Су", 1500, "мл"], [null, "Тұз", 1, "шай қасық"]],
+      st: [["Суды тұздап қайнатып, макаронды пісіріп, сүзіп алыңыз.", 10], ["Табада сары май мен сүтті жылытыңыз.", 2], ["Ірімшікті үгіп қосып, ерігенше араластырыңыз.", 3], ["Макаронды тұздықпен араластырып беріңіз.", 2]] },
+    { n: "Тауықты күріш", t: ["l", "d"], time: "50 минут", req: ["chicken", "carrot"], opt: ["tomato"],
+      look: { c: "plate", base: "mound", f: "#F4EBD0", g: ["chicken", "carrot", "tomato"] },
+      am: [["chicken", "Тауық еті", 300, "г"], [null, "Күріш", 150, "г"], ["carrot", "Сәбіз", 1, "дана"], ["tomato", "Қызанақ", 1, "дана", 1], [null, "Өсімдік майы", 2, "ас қасық"], [null, "Су", 350, "мл"], [null, "Тұз", 1, "шай қасық"]],
+      st: [["Етті кесектеп, майда қуырыңыз.", 8], ["Сәбізді жолақтап, қызанақпен бірге қосыңыз.", 5], ["Жуылған күріш, су және тұз салыңыз.", 2], ["Қақпақты жауып, аз отта пісіріңіз.", 20], ["Отты өшіріп, демдеп, араластырып беріңіз.", 10]] },
+    { n: "Тауық пен көкөніс қуырдағы", t: ["d"], time: "25 минут", req: ["chicken", ["carrot", "veg", "tomato", "cucumber"]], opt: ["tomato", "cheese"],
+      look: { c: "plate", base: "mound", f: "#C98A4B", g: ["chicken", "veg", "carrot"] },
+      am: [["chicken", "Тауық еті", 350, "г"], [["carrot", "veg", "tomato", "cucumber"], "Көкөніс (сәбіз, брокколи, қызанақ)", 300, "г"], ["cheese", "Ірімшік", 30, "г", 1], [null, "Өсімдік майы", 2, "ас қасық"], [null, "Тұз", 1, "шай қасық"], [null, "Қара бұрыш", 0.25, "шай қасық"]],
+      st: [["Тауық етін кішкене кесектеп тураңыз.", 3], ["Қыздырылған майда етті қызартып қуырыңыз.", 8], ["Көкөністі қосып, араластырып пісіріңіз.", 8], ["Тұз бен бұрыш қосып, қалауыңызша ірімшік себіңіз.", 2]] },
+    { n: "Тауық еті ірімшікпен пеште", t: ["d"], time: "40 минут", req: ["chicken", "cheese"], opt: ["tomato"],
+      look: { c: "plate", base: "fillet", f: "#E9B866", g: ["chicken", "cheese", "tomato"] },
+      am: [["chicken", "Тауық еті", 400, "г"], ["cheese", "Ірімшік", 100, "г"], ["tomato", "Қызанақ", 2, "дана", 1], [null, "Өсімдік майы", 1, "ас қасық"], [null, "Тұз", 1, "шай қасық"], [null, "Қара бұрыш", 0.25, "шай қасық"]],
+      st: [["Пешті 200 °C-қа қыздырыңыз.", 10], ["Тауық етін жұқа тіліктеп, тұз бен бұрыш жағыңыз.", 5], ["Етті майланған қалыпқа салып, үстіне қызанақ тілімдерін қойыңыз.", 3], ["Үстіне ірімшік үгіп, пеште пісіріңіз.", 30]] },
+    { n: "Сиыр еті мен сәбіз қуырмасы", t: ["d"], time: "60 минут", req: ["beef", "carrot"], opt: ["tomato"],
+      look: { c: "plate", base: "mound", f: "#A5603A", g: ["beef", "carrot"] },
+      am: [["beef", "Сиыр еті", 400, "г"], ["carrot", "Сәбіз", 2, "дана"], ["tomato", "Қызанақ", 1, "дана", 1], [null, "Өсімдік майы", 2, "ас қасық"], [null, "Су", 300, "мл"], [null, "Тұз", 1, "шай қасық"]],
+      st: [["Етті кесектеп тураңыз.", 5], ["Қыздырылған майда етті қызартып қуырыңыз.", 10], ["Сәбіз бен қызанақты қосып, 5 минут араластырыңыз.", 5], ["Су мен тұз қосып, қақпақпен аз отта жұмсарғанша пісіріңіз.", 40]] },
+    { n: "Етті кеспе (лағман үлгісі)", t: ["l", "d"], time: "55 минут", req: ["beef", "carrot", "tomato"], opt: ["cucumber"],
+      look: { c: "bowl", f: "#D9652F", steam: 1, g: ["beef", "carrot", "tomato"] },
+      am: [["beef", "Сиыр еті", 300, "г"], ["carrot", "Сәбіз", 1, "дана"], ["tomato", "Қызанақ", 2, "дана"], [null, "Макарон", 200, "г"], ["cucumber", "Қияр", 1, "дана", 1], [null, "Өсімдік майы", 2, "ас қасық"], [null, "Су", 400, "мл"], [null, "Тұз", 1, "шай қасық"]],
+      st: [["Етті майда кесектеп қуырыңыз.", 8], ["Сәбіз бен қызанақты қосып араластырыңыз.", 5], ["Су мен тұз құйып, аз отта пісіріңіз.", 30], ["Макаронды жеке пісіріп, сүзіп алыңыз.", 10], ["Макаронның үстіне тұздық құйып, қиярмен беріңіз.", 2]] },
+    { n: "Пеште лимонды балық", t: ["d"], time: "35 минут", req: ["fish"], opt: ["lemon", "butter"],
+      look: { c: "plate", base: "fillet", f: "#F3B79A", g: ["fish", "lemon", "butter"] },
+      am: [["fish", "Балық (филе)", 400, "г"], ["lemon", "Лимон", 1, "дана", 1], ["butter", "Сары май", 20, "г", 1], [null, "Тұз", 1, "шай қасық"], [null, "Қара бұрыш", 0.25, "шай қасық"]],
+      st: [["Пешті 190 °C-қа қыздырыңыз.", 10], ["Балықты тұз бен бұрышпен дәмдеп, қалыпқа салыңыз.", 3], ["Үстіне лимон тілімдері мен сары май салыңыз.", 2], ["Пеште пісіріңіз.", 22]] },
+    { n: "Балық пен көкөніс", t: ["d"], time: "35 минут", req: ["fish", ["carrot", "veg", "tomato"]], opt: ["lemon"],
+      look: { c: "plate", base: "fillet", f: "#F3B79A", g: ["fish", "veg", "carrot"] },
+      am: [["fish", "Балық (филе)", 400, "г"], [["carrot", "veg", "tomato"], "Көкөніс (сәбіз, брокколи, қызанақ)", 300, "г"], ["lemon", "Лимон", 0.5, "дана", 1], [null, "Өсімдік майы", 2, "ас қасық"], [null, "Тұз", 1, "шай қасық"]],
+      st: [["Көкөністі кішкене турап, табада майда қуырыңыз.", 6], ["Балықты тұздап, көкөністің үстіне салыңыз.", 2], ["Қақпақпен жауып, аз отта пісіріңіз.", 12], ["Лимон шырынын тамызып беріңіз.", 1]] },
+    { n: "Алмалы шарлотка", t: ["s"], time: "60 минут", req: ["apple", "egg"], opt: ["butter", "lemon", "milk"],
+      look: { c: "plate", base: "cake", g: ["apple", "egg"] },
+      am: [["apple", "Алма", 3, "дана"], ["egg", "Жұмыртқа", 3, "дана"], [null, "Қант", 150, "г"], [null, "Ұн", 150, "г"], ["butter", "Сары май (қалыпқа)", 10, "г", 1], ["lemon", "Лимон шырыны", 1, "шай қасық", 1]],
+      st: [["Пешті 180 °C-қа қыздырыңыз, қалыпты майлаңыз.", 10], ["Жұмыртқаны қантпен ақтай көпіршіңіз.", 7], ["Ұнды елеп қосып, ақырын араластырыңыз.", 3], ["Алманы кесектеп қалыпқа салып, үстіне қамыр құйыңыз.", 5], ["Пеште пісіріп, тоқаштың піскенін таяқшамен тексеріңіз.", 35]] },
+    { n: "Пеште жентектелген алма", t: ["s"], time: "30 минут", req: ["apple"], opt: ["butter", "yogurt", "lemon"],
+      look: { c: "plate", g: ["apple", "apple", "yogurt"] },
+      am: [["apple", "Алма", 4, "дана"], [null, "Қант", 2, "ас қасық"], ["butter", "Сары май", 20, "г", 1], ["yogurt", "Йогурт (беруге)", 200, "г", 1], ["lemon", "Лимон шырыны", 1, "шай қасық", 1]],
+      st: [["Пешті 180 °C-қа қыздырыңыз.", 10], ["Алманың ортасын тазалап, лимон шырынын тамызыңыз.", 4], ["Ішіне қант пен сары май салыңыз.", 2], ["Пеште жұмсарғанша пісіріңіз.", 20], ["Йогуртпен беріңіз.", 1]] },
+    { n: "Сүтті пудинг", t: ["s"], time: "25 минут", req: ["milk", "egg"], opt: ["butter"],
+      look: { c: "bowl", f: "#F7E3A1", steam: 1, g: ["milk", "egg"] },
+      am: [["milk", "Сүт", 500, "мл"], ["egg", "Жұмыртқа", 2, "дана"], [null, "Қант", 3, "ас қасық"], [null, "Ұн", 2, "ас қасық"], ["butter", "Сары май", 10, "г", 1]],
+      st: [["Сүтті қантпен жылытып қайнатыңыз.", 6], ["Жұмыртқа мен ұнды аздап сүтпен араластырыңыз.", 3], ["Қоспаны қайнап жатқан сүтке жіңішке ағыммен құйыңыз.", 2], ["Қоюланғанша араластырыңыз.", 5], ["Тостағандарға құйып, салқындатыңыз.", 10]] }
+  ];
+  var dgid = 0;
+  function dish(r) {
+    dgid++;
+    var L = r.look, bg = ({ b: ["#FFF3D9", "#FFE2B5"], l: ["#E6F5EA", "#CDEBD6"], d: ["#E7EEFB", "#D2DFF6"], s: ["#FDE9EF", "#F9D3E0"] })[r.t[0]], g = L.g, pos, i;
+    var s = '<svg class="dish" viewBox="0 0 320 190" role="img" aria-label="' + r.n + ' иллюстрациясы"><defs><linearGradient id="dg' + dgid + '" x1="0" x2="1" y1="0" y2="1"><stop offset="0" stop-color="' + bg[0] + '"/><stop offset="1" stop-color="' + bg[1] + '"/></linearGradient></defs><rect width="320" height="190" fill="url(#dg' + dgid + ')"/>';
+    if (L.c === "bowl") {
+      s += '<ellipse cx="160" cy="168" rx="104" ry="11" fill="rgba(0,0,0,.14)"/><path d="M58 100h204a102 66 0 0 1-204 0z" fill="#fff" stroke="#DCE6E6" stroke-width="2"/><ellipse cx="160" cy="100" rx="102" ry="22" fill="#EEF3F3"/><ellipse cx="160" cy="101" rx="88" ry="17" fill="' + L.f + '"/>';
+      pos = ({ 1: [[160, 56]], 2: [[126, 58], [194, 60]], 3: [[98, 62], [160, 48], [222, 64]] })[g.length];
+    } else {
+      s += '<ellipse cx="160" cy="152" rx="132" ry="28" fill="rgba(0,0,0,.12)"/><ellipse cx="160" cy="130" rx="130" ry="46" fill="#fff"/><ellipse cx="160" cy="130" rx="102" ry="34" fill="#F0F4F4"/>';
+      if (L.base === "omelet") s += '<path d="M84 132Q160 58 236 132Q160 154 84 132z" fill="#FFD54F"/><path d="M84 132Q160 116 236 132" stroke="#F2B705" stroke-width="3" fill="none"/>';
+      else if (L.base === "mound") s += '<ellipse cx="160" cy="124" rx="78" ry="28" fill="' + L.f + '" stroke="rgba(0,0,0,.08)" stroke-width="2"/><ellipse cx="160" cy="114" rx="60" ry="20" fill="' + L.f + '" stroke="rgba(0,0,0,.06)" stroke-width="2"/>';
+      else if (L.base === "fillet") s += '<ellipse cx="160" cy="126" rx="86" ry="27" fill="' + L.f + '"/><path d="M92 124Q160 104 228 124" stroke="rgba(0,0,0,.14)" stroke-width="3" fill="none"/>';
+      else if (L.base === "pancake") s += '<ellipse cx="160" cy="134" rx="76" ry="21" fill="#D79B4F"/><ellipse cx="160" cy="122" rx="76" ry="21" fill="#E8B66B"/><ellipse cx="160" cy="110" rx="76" ry="21" fill="#F0C27A"/><ellipse cx="160" cy="98" rx="76" ry="21" fill="#F5CD8A"/>';
+      else if (L.base === "cake") s += '<ellipse cx="160" cy="134" rx="94" ry="32" fill="#A8672F"/><ellipse cx="160" cy="122" rx="94" ry="32" fill="#D9A25B"/><ellipse cx="160" cy="120" rx="76" ry="24" fill="#E3B26E"/>';
+      pos = ({ 1: [[160, 70]], 2: [[122, 74], [198, 82]], 3: [[94, 84], [160, 64], [226, 88]] })[g.length];
+    }
+    if (L.steam) [138, 160, 182].forEach(function (x, k) { s += '<path class="st" d="M' + x + ' 46q-7-9 0-17t0-15" stroke="#fff" stroke-width="3.5" fill="none" stroke-linecap="round" opacity=".85" style="animation-delay:' + (k * 0.5) + 's"/>'; });
+    for (i = 0; i < g.length; i++) s += '<use class="dg" style="animation-delay:' + (i * 0.45) + 's" href="#i-' + g[i] + '" x="' + (pos[i][0] - 30) + '" y="' + pos[i][1] + '" width="60" height="60"/>';
+    return s + "</svg>";
+  }
+  function fq(q, u, k) {
+    var v = q * k;
+    if (u === "г" || u === "мл") {
+      v = v >= 40 ? Math.round(v / 5) * 5 : Math.round(v);
+      return (u === "мл" && v >= 1000 ? f1(v / 1000) + " л" : v + " " + u);
+    }
+    var step = (u === "дана" || u === "тілім") ? 0.5 : 0.25;
+    v = Math.max(step, Math.round(v / step) * step);
+    if (u === "тілім") v = Math.max(1, Math.round(v));
+    var w = Math.floor(v), f = v - w, fs = f >= 0.75 ? "¾" : f >= 0.5 ? "½" : f >= 0.25 ? "¼" : "";
+    return ((w ? w : "") + fs) + " " + u;
+  }
+  function camItems() {
+    return CAM.sel.map(function (id) { return { id: id, icon: id, n: cpName(id) }; }).concat(CAM.custom.map(function (c) { return { id: c.id, icon: "meal", n: c.n }; }));
+  }
+  function camFridge() {
+    var lg = CAM.brand === "lg";
+    var c1 = lg ? "#59666A" : "#F2F6F7", c2 = lg ? "#22292C" : "#B7C5C8", hd = lg ? "#9DB0B4" : "#8FA3A5", tx = lg ? "#C9DADD" : "#587074";
+    var items = camItems(), shown = items.slice(0, 16), r, s;
+    s = '<svg class="cf' + (CAM.open ? " open" : "") + '" id="camsvg" viewBox="0 0 360 580" role="img" aria-label="' + BRANDS[CAM.brand] + ' тоңазытқышы, үстінде камера"><defs>' +
+      '<linearGradient id="cg1" x1="0" x2="1"><stop offset="0" stop-color="' + c1 + '"/><stop offset="1" stop-color="' + c2 + '"/></linearGradient>' +
+      '<linearGradient id="cg2" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#F6FCFA"/><stop offset="1" stop-color="#D3E9E3"/></linearGradient>' +
+      '<linearGradient id="cg3" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#6EF0CF" stop-opacity=".5"/><stop offset="1" stop-color="#6EF0CF" stop-opacity="0"/></linearGradient>' +
+      '<clipPath id="cclip"><rect x="44" y="84" width="272" height="346" rx="10"/></clipPath></defs>';
+    s += '<rect x="30" y="70" width="300" height="490" rx="24" fill="#8FA0A3"/><rect x="34" y="72" width="292" height="484" rx="22" fill="url(#cg1)"/>';
+    s += '<rect x="44" y="84" width="272" height="346" rx="10" fill="url(#cg2)"/>';
+    for (r = 0; r < 4; r++) s += '<rect x="44" y="' + (160 + r * 84) + '" width="272" height="5" fill="#B5D2CB"/>';
+    shown.forEach(function (it, i) {
+      var row = Math.floor(i / 4), col = i % 4, x = 86 + col * 56, y = 110 + row * 84;
+      s += '<g class="itm' + (it.id === CAM.last ? " new" : "") + '"><use href="#i-' + it.icon + '" x="' + x + '" y="' + y + '" width="46" height="46"/><rect class="bx" x="' + (x - 2) + '" y="' + (y - 2) + '" width="50" height="50" rx="8" style="animation-delay:' + ((y - 84) / 100).toFixed(2) + 's"/></g>';
+    });
+    if (items.length > 16) s += '<text x="300" y="424" text-anchor="end" font-family="Montserrat,Arial,sans-serif" font-weight="700" font-size="13" fill="#4A6663">+' + (items.length - 16) + '</text>';
+    s += '<polygon class="beam" points="168,52 192,52 316,430 44,430" fill="url(#cg3)"/><g clip-path="url(#cclip)"><rect class="scan" x="44" y="84" width="272" height="4" fill="#6EF0CF"/></g>';
+    s += '<g class="door"><rect x="44" y="84" width="272" height="346" rx="14" fill="url(#cg1)" stroke="' + hd + '"/><rect x="58" y="210" width="9" height="120" rx="4.5" fill="' + hd + '"/>';
+    if (lg) s += '<rect x="110" y="160" width="150" height="120" rx="12" fill="none" stroke="' + hd + '" stroke-width="2"/>';
+    else s += '<rect x="130" y="112" width="110" height="40" rx="8" fill="#0E2A2B"/><text x="185" y="140" text-anchor="middle" font-family="Montserrat,Arial,sans-serif" font-weight="800" font-size="18" fill="#6EF0CF">4,0°</text>';
+    s += '<text x="185" y="404" text-anchor="middle" font-family="Montserrat,Arial,sans-serif" font-weight="800" font-size="13" letter-spacing="3" fill="' + tx + '">' + (lg ? "LG" : "SAMSUNG") + '</text></g>';
+    s += '<rect x="44" y="440" width="272" height="106" rx="12" fill="url(#cg1)" stroke="' + hd + '"/><rect x="120" y="454" width="120" height="8" rx="4" fill="' + hd + '"/>';
+    s += '<rect x="64" y="556" width="40" height="8" rx="3" fill="#6C7C7F"/><rect x="256" y="556" width="40" height="8" rx="3" fill="#6C7C7F"/>';
+    s += '<rect x="168" y="56" width="24" height="16" fill="#6C7C7F"/><rect x="104" y="14" width="152" height="44" rx="14" fill="#2B3638"/><circle cx="180" cy="36" r="15" fill="#0E1A1C" stroke="#6EF0CF" stroke-width="2"/><circle cx="180" cy="36" r="6.500" fill="#6EF0CF" opacity=".85"/><circle class="led" cx="238" cy="26" r="3.500" fill="#FF5A4D"/><text x="120" y="40" font-family="Montserrat,Arial,sans-serif" font-weight="800" font-size="11" fill="#9FB3B2">AI</text></svg>';
+    return s;
+  }
+  function renderCam() {
+    $("cam-stage").innerHTML = camFridge();
+    $("cam-door").textContent = CAM.open ? "Есікті жабу" : "Есікті ашу";
+    var items = camItems();
+    $("cam-seen").innerHTML = items.length ? items.map(function (it) { return "<span>" + sym(it.icon) + esc(it.n) + "</span>"; }).join("") : '<span style="border-style:dashed;color:var(--muted)">Тоңазытқыш бос</span>';
+    $("pgrid").innerHTML = CP.map(function (p) {
+      return '<button type="button" class="pbtn" aria-pressed="' + (CAM.sel.indexOf(p.id) >= 0) + '" data-p="' + p.id + '">' + sym(p.id) + "<span>" + p.n + "</span></button>";
+    }).join("") + CAM.custom.map(function (c) {
+      return '<button type="button" class="pbtn" aria-pressed="true" data-c="' + c.id + '" aria-label="Өшіру: ' + esc(c.n) + '">' + sym("meal") + "<span>" + esc(c.n) + " ×</span></button>";
+    }).join("");
+    renderTracker();
+    renderChef();
+  }
+  var SHELF = { milk: 7, egg: 28, cheese: 21, butter: 30, yogurt: 10, chicken: 2, beef: 4, fish: 1.5, tomato: 7, cucumber: 7, carrot: 21, veg: 7, apple: 28, lemon: 21, bread: 5 };
+  function camCond() { var u = loadUser(); return { room: u ? u.room : 24, doors: u ? u.doors : 20 }; }
+  function remainOf(id) { var L = SHELF[id]; if (!L) return null; var c = camCond(); return L / rate(teff(4, c.room, c.doors)) - (CAM.days[id] || 0); }
+  function urgW(id) { var r = remainOf(id); if (r === null) return 0; if (r <= 0) return -1; if (r < 1) return 3; if (r < 3) return 2; if (r < 6) return 1; return 0; }
+  function haveList() { return CAM.sel.filter(function (id) { var r = remainOf(id); return r === null || r > 0; }); }
+  function renderTracker() {
+    var ids = CAM.sel.filter(function (id) { return SHELF[id]; });
+    $("trk").innerHTML = ids.length ? ids.map(function (id) {
+      var L = SHELF[id], mx = Math.min(30, Math.max(3, Math.ceil(L * 1.5)));
+      return '<div class="trow"><span class="tn">' + sym(id) + cpName(id) + '</span><div class="days"><input type="range" id="d-' + id + '" min="0" max="' + mx + '" step="1" value="' + Math.min(mx, CAM.days[id] || 0) + '" aria-label="Сақталған күн: ' + cpName(id) + '"><span id="dd-' + id + '"></span></div><span id="dr-' + id + '"></span></div>';
+    }).join("") : '<p style="color:var(--muted)">Өнім қосыңыз, мерзімі осында көрінеді.</p>';
+    ids.forEach(function (id) { $("d-" + id).addEventListener("input", function (e) { CAM.days[id] = +e.target.value; updTracker(); renderChef(); }); });
+    updTracker();
+  }
+  function updTracker() {
+    var urgent = [], bad = [];
+    CAM.sel.forEach(function (id) {
+      if (!SHELF[id]) return;
+      var r = remainOf(id), d = $("dd-" + id), pl = $("dr-" + id);
+      if (d) d.textContent = CAM.days[id] || 0;
+      var c = r <= 0 ? "bad" : r < 3 ? "warn" : "ok";
+      if (pl) pl.innerHTML = '<span class="pill ' + c + '">' + (r <= 0 ? "бұзылған" : f1(r) + " күн қалды") + "</span>";
+      if (r <= 0) bad.push(cpName(id)); else if (r < 3) urgent.push([r, cpName(id)]);
+    });
+    urgent.sort(function (a, b) { return a[0] - b[0]; });
+    $("urgent").innerHTML = (urgent.length ? '<p class="save">Алдымен жеңіңіз: ' + urgent.map(function (u) { return u[1] + " (" + f1(u[0]) + " күн)"; }).join(", ") + "</p>" : "") + (bad.length ? '<p class="bad-t">Мерзімі өтті, тастаңыз: ' + bad.join(", ") + "</p>" : "");
+  }
+  var SHOP = [];
+  try { SHOP = JSON.parse(sget("salqyn-shop") || "[]"); } catch (e) { SHOP = []; }
+  function renderShop() {
+    $("shop").innerHTML = SHOP.length ? SHOP.map(function (n, i) { return '<li><span>' + esc(n) + '</span><button type="button" class="rm" data-i="' + i + '" aria-label="Өшіру: ' + esc(n) + '">×</button></li>'; }).join("") : '<li style="color:var(--muted)">Тізім бос. Рецепт карточкасындағы «Тізімге қосу» түймесін басыңыз.</li>';
+    sset("salqyn-shop", JSON.stringify(SHOP));
+  }
+  function evalRecipe(r) {
+    var have = haveList(), used = [], missing = [], haveOpt;
+    r.req.forEach(function (q) {
+      if (Array.isArray(q)) {
+        var f = q.filter(function (x) { return have.indexOf(x) >= 0; });
+        if (f.length) used.push(f[0]); else missing.push(q.map(cpName).join(" / "));
+      } else if (have.indexOf(q) >= 0) used.push(q); else missing.push(cpName(q));
+    });
+    haveOpt = (r.opt || []).filter(function (x) { return have.indexOf(x) >= 0 && used.indexOf(x) < 0; });
+    var all = used.concat(haveOpt), perish = all.filter(function (x) { return cpW(x) >= 2; });
+    var score = (missing.length ? 40 : 100) + haveOpt.length * 3 + perish.reduce(function (a, x) { return a + cpW(x) * 5; }, 0);
+    return { r: r, missing: missing, used: used, haveOpt: haveOpt, perish: perish, score: score };
+  }
+  function renderChef() {
+    var HV = haveList();
+    var list = RECIPES.filter(function (r) { return CAM.tab === "all" || r.t.indexOf(CAM.tab) >= 0; }).map(evalRecipe).filter(function (e) { return e.missing.length <= 1 && e.used.length > 0; });
+    list.sort(function (a, b) { return b.score - a.score; });
+    var ready = list.filter(function (e) { return !e.missing.length; }).length;
+    $("chef-sum").textContent = camItems().length ? "Тоңазытқышта " + camItems().length + " өнім бар. Дайын рецепт: " + ready + (list.length - ready ? ", бір өнім жетпейтін: " + (list.length - ready) : "") + "." : "Өнім таңдаңыз, AI аспаз ұсыныс жасайды.";
+    $("recipes").innerHTML = list.slice(0, 6).map(function (e) {
+      var r = e.r, k = CAM.serv / 2;
+      var amt = r.am.map(function (a) {
+        var st, opt = !!a[4];
+        if (a[0] === null) st = "pan";
+        else { var ids = Array.isArray(a[0]) ? a[0] : [a[0]]; st = ids.some(function (x) { return HV.indexOf(x) >= 0; }) ? "have" : (opt ? "pan" : "miss"); }
+        return '<li class="' + st + '"><span>' + (st === "have" ? "✓ " : st === "miss" ? "✗ " : "") + a[1] + (opt ? " <small>(қалауыңызша)</small>" : "") + "</span><b>" + fq(a[2], a[3], k) + "</b></li>";
+      }).join("");
+      var steps = r.st.map(function (x, i) { return '<li><button type="button" class="stp" aria-pressed="false"><span class="sn">' + (i + 1) + '</span><span class="tx">' + x[0] + '</span><span class="tm">' + x[1] + " мин</span></button></li>"; }).join("");
+      var miss = r.am.filter(function (a) { return a[0] !== null && !a[4] && !(Array.isArray(a[0]) ? a[0] : [a[0]]).some(function (x) { return HV.indexOf(x) >= 0; }); }).map(function (a) { return a[1]; });
+      var shopBtn = miss.length ? '<button type="button" class="btn primary sm" data-shop="' + esc(miss.join("|")) + '">Тізімге қосу: ' + esc(miss.join(", ")) + "</button>" : "";
+      var yt = "https://www.youtube.com/results?search_query=" + encodeURIComponent(r.n + " рецепт");
+      return '<article class="card recipe">' + dish(r) + '<div class="rhead"><span class="mt">' + r.t.map(function (x) { return MEALS[x]; }).join(" · ") + '</span><span class="pill ' + (e.missing.length ? "warn" : "ok") + '">' + (e.missing.length ? "1 өнім жетпейді: " + e.missing[0] : "Дайын") + "</span></div>" +
+        "<h3>" + r.n + '</h3><p class="rmeta">' + r.time + " · " + CAM.serv + " порция</p>" +
+        (e.perish.length ? '<p class="save">Бұзылуға жақын өнімді қолданады: ' + e.perish.map(cpName).join(", ") + "</p>" : "") +
+        '<h4>Қажетті өнімдер</h4><ul class="amt">' + amt + '</ul><h4>Дайындалу қадамдары</h4><ol class="steps2">' + steps + '</ol>' +
+        '<div class="hero-cta">' + shopBtn + '<a class="btn ghost sm" href="' + yt + '" target="_blank" rel="noopener">YouTube-та бейне рецепт іздеу ↗</a></div></article>';
+    }).join("") || '<p style="color:var(--muted)">Бұл өнімдерден сәйкес рецепт табылмады. Тағы бірнеше өнім қосып көріңіз.</p>';
+  }
+  function enterCamera() {
+    if (!CAM.init) {
+      CAM.init = true;
+      var u = loadUser();
+      if (u && u.mode === "own" && u.fridge && /^(samsung|lg)$/i.test(u.fridge.brand)) CAM.brand = u.fridge.brand.toLowerCase();
+      $$('input[name="cbrand"]').forEach(function (r) { r.checked = r.value === CAM.brand; });
+    }
+    renderCam();
+  }
+  $$('input[name="cbrand"]').forEach(function (r) { r.addEventListener("change", function () { CAM.brand = r.value; CAM.last = ""; renderCam(); }); });
+  $("cam-door").addEventListener("click", function () { CAM.open = !CAM.open; $("camsvg").classList.toggle("open", CAM.open); $("cam-door").textContent = CAM.open ? "Есікті жабу" : "Есікті ашу"; });
+  $("pgrid").addEventListener("click", function (e) {
+    var b = e.target.closest("button"); if (!b) return;
+    var id = b.getAttribute("data-p"), cid2 = b.getAttribute("data-c");
+    if (id) {
+      var i = CAM.sel.indexOf(id);
+      if (i >= 0) { CAM.sel.splice(i, 1); CAM.last = ""; }
+      else { if (camItems().length >= 16) { flash("cp-name", "Тоңазытқышқа 16 өнімнен артық сыймайды"); return; } CAM.sel.push(id); CAM.last = id; if (CAM.days[id] === undefined) CAM.days[id] = 0; }
+    } else if (cid2) { CAM.custom = CAM.custom.filter(function (c) { return c.id !== cid2; }); CAM.last = ""; }
+    renderCam();
+  });
+  wireInputs($("cp-name").closest(".addp"));
+  $("cp-add").addEventListener("click", function () {
+    touched["cp-name"] = 1;
+    if (!validateEl($("cp-name"))) return;
+    if (camItems().length >= 16) { setErr("cp-name", "Тоңазытқышқа 16 өнімнен артық сыймайды"); return; }
+    CAM.n++; var id = "x" + CAM.n;
+    CAM.custom.push({ id: id, n: $("cp-name").value.trim() }); CAM.last = id;
+    $("cp-name").value = ""; $("cp-name").classList.remove("ok-f"); touched["cp-name"] = 0;
+    renderCam();
+  });
+  $("cp-sample").addEventListener("click", function () { CAM.sel = SAMPLE.slice(); CAM.days = Object.assign({}, SAMPLE_DAYS); CAM.custom = []; CAM.last = ""; renderCam(); });
+  $("cp-clear").addEventListener("click", function () { CAM.sel = []; CAM.custom = []; CAM.last = ""; renderCam(); });
+  $$("#serv button").forEach(function (b) {
+    b.addEventListener("click", function () { CAM.serv = +b.getAttribute("data-s"); $$("#serv button").forEach(function (x) { x.setAttribute("aria-pressed", x === b); }); renderChef(); });
+  });
+  $("recipes").addEventListener("click", function (e) { var b = e.target.closest(".stp"); if (b) { b.setAttribute("aria-pressed", b.getAttribute("aria-pressed") !== "true"); return; }
+    var sb = e.target.closest("[data-shop]");
+    if (sb) { sb.getAttribute("data-shop").split("|").forEach(function (n) { if (SHOP.indexOf(n) < 0) SHOP.push(n); }); renderShop(); sb.textContent = "Қосылды ✓"; }
+  });
+  $("shop").addEventListener("click", function (e) { var b = e.target.closest(".rm"); if (b) { SHOP.splice(+b.getAttribute("data-i"), 1); renderShop(); } });
+  $("shop-clear").addEventListener("click", function () { SHOP = []; renderShop(); });
+  $("shop-copy").addEventListener("click", function () {
+    var b = $("shop-copy");
+    function ok() { b.textContent = "Көшірілді ✓"; setTimeout(function () { b.textContent = "Көшіру"; }, 1800); }
+    function fb() { var r = document.createRange(); r.selectNodeContents($("shop")); var sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(r); b.textContent = "Белгіленді, Ctrl+C басыңыз"; }
+    if (!SHOP.length) return;
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(SHOP.join("\n")).then(ok, fb); else fb();
+  });
+  $("code-copy").addEventListener("click", function () {
+    var b = $("code-copy");
+    function ok() { b.textContent = "Көшірілді ✓"; setTimeout(function () { b.textContent = "Кодты көшіру"; }, 1800); }
+    function fb() { var r = document.createRange(); r.selectNodeContents($("code")); var sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(r); b.textContent = "Белгіленді, Ctrl+C басыңыз"; }
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText($("code").textContent).then(ok, fb); else fb();
+  });
+  renderShop();
+  $$("#tabs button").forEach(function (b) {
+    b.addEventListener("click", function () { CAM.tab = b.getAttribute("data-tab"); $$("#tabs button").forEach(function (x) { x.setAttribute("aria-pressed", x === b); }); renderChef(); });
+  });
+
+  $("theme-btn").addEventListener("click", function () {
+    var r = document.documentElement, dark = r.getAttribute("data-theme") === "dark" || (!r.getAttribute("data-theme") && window.matchMedia("(prefers-color-scheme: dark)").matches);
+    r.setAttribute("data-theme", dark ? "light" : "dark");
+  });
+
+  refreshAuth();
+  buildRows(); updatePanel();
+  route();
+  observe();
+})();
+</script>
+
+</body>
+</html>
