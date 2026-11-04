@@ -1,0 +1,1097 @@
+<!doctype html>
+<html lang="kk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Салқын AI</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Noto+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout: consumer appliance brand site. Sticky header, hash-routed views (home, models, panel, signup, account), animated fridge hero. */
+:root {
+  --bg: #F3F9F7;
+  --surface: #FFFFFF;
+  --surface2: #E8F3F0;
+  --fg: #0F2B2A;
+  --muted: #4A6663;
+  --line: #D3E4E0;
+  --brand: #0A7F6B;
+  --brand-ink: #FFFFFF;
+  --brand-soft: #DDF3EC;
+  --blue: #2370C2;
+  --ok: #14804A;
+  --warn: #9A5B08;
+  --bad: #C23B2E;
+  --shadow: 0 10px 30px rgba(15, 43, 42, 0.10);
+  --font-display: "Montserrat", "Noto Sans", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  --font-body: "Noto Sans", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #08191A; --surface: #0F2527; --surface2: #14302F; --fg: #E6F4F1; --muted: #9BBDB8; --line: #21413F;
+    --brand: #3DD6B5; --brand-ink: #04211C; --brand-soft: #123B36; --blue: #7DBBFF;
+    --ok: #5FD38D; --warn: #E6B655; --bad: #FF8A78; --shadow: 0 10px 30px rgba(0, 0, 0, 0.35); color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #08191A; --surface: #0F2527; --surface2: #14302F; --fg: #E6F4F1; --muted: #9BBDB8; --line: #21413F;
+  --brand: #3DD6B5; --brand-ink: #04211C; --brand-soft: #123B36; --blue: #7DBBFF;
+  --ok: #5FD38D; --warn: #E6B655; --bad: #FF8A78; --shadow: 0 10px 30px rgba(0, 0, 0, 0.35); color-scheme: dark;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html { scroll-behavior: smooth; scroll-padding-top: 120px; }
+body {
+  background: var(--bg); color: var(--fg);
+  font-family: var(--font-body); font-size: 17px; line-height: 1.65;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 0; overflow-x: hidden;
+}
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 40; background: var(--bg); }
+.wrap { max-width: 1160px; margin: 0 auto; }
+h1, h2, h3 { font-family: var(--font-display); margin: 0; text-wrap: balance; line-height: 1.15; letter-spacing: -0.01em; }
+h1 { font-size: clamp(2.1rem, 5.6vw, 3.7rem); font-weight: 800; }
+h2 { font-size: clamp(1.7rem, 3.8vw, 2.5rem); font-weight: 800; }
+h3 { font-size: 1.15rem; font-weight: 700; }
+p { margin: 0; }
+a { color: var(--brand); }
+.num { font-variant-numeric: tabular-nums; }
+:focus-visible { outline: 3px solid var(--blue); outline-offset: 2px; border-radius: 6px; }
+
+/* header */
+.top { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 30; background: color-mix(in srgb, var(--bg) 92%, transparent); backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); }
+.top .wrap { display: flex; align-items: center; gap: 14px; padding-block: 10px; flex-wrap: wrap; }
+.brand { font-family: var(--font-display); font-weight: 800; font-size: 1.3rem; text-decoration: none; color: var(--fg); display: flex; align-items: center; gap: 10px; }
+.logo { width: 34px; height: 34px; border-radius: 10px; background: linear-gradient(135deg, var(--brand), var(--blue)); display: grid; place-items: center; }
+.logo svg { width: 20px; height: 20px; }
+nav { display: flex; gap: 4px; margin-left: 24px; }
+nav a { text-decoration: none; color: var(--muted); font-weight: 600; font-size: 0.98rem; padding: 8px 14px; border-radius: 10px; }
+nav a:hover { background: var(--surface2); color: var(--fg); }
+nav a[aria-current="page"] { background: var(--brand-soft); color: var(--brand); }
+.top-right { margin-left: auto; display: flex; gap: 10px; align-items: center; }
+.btn { font: inherit; font-weight: 600; font-size: 1rem; min-height: 46px; padding: 0 22px; border-radius: 12px; border: 2px solid transparent; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; transition: transform .18s ease, box-shadow .18s ease, background .18s ease; }
+.btn:hover { transform: translateY(-2px); }
+.btn.primary { background: var(--brand); color: var(--brand-ink); box-shadow: 0 8px 20px color-mix(in srgb, var(--brand) 35%, transparent); }
+.btn.ghost { background: transparent; color: var(--fg); border-color: var(--line); }
+.btn.ghost:hover { border-color: var(--brand); }
+.btn.sm { min-height: 40px; padding: 0 16px; font-size: 0.93rem; }
+.icon-btn { width: 44px; min-height: 44px; padding: 0; }
+
+/* views */
+.view { animation: viewIn .5s ease both; }
+@keyframes viewIn { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+section { padding-block: clamp(44px, 7vw, 88px); }
+.sec-head { max-width: 62ch; display: grid; gap: 12px; margin-bottom: 36px; }
+.sec-head p { color: var(--muted); font-size: 1.05rem; }
+.kicker { font-family: var(--font-display); font-weight: 700; font-size: 0.82rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--brand); }
+.rv { transform: translateY(26px); transition: transform .7s cubic-bezier(.2,.7,.2,1); }
+.rv.in { transform: none; }
+
+/* hero */
+.hero { position: relative; padding-block: clamp(36px, 6vw, 80px) clamp(40px, 6vw, 72px); display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: clamp(24px, 5vw, 56px); align-items: center; }
+.hero::before { content: ""; position: absolute; inset: -40px 0 auto 0; height: 130%; background: radial-gradient(ellipse 50% 55% at 75% 40%, color-mix(in srgb, var(--brand) 22%, transparent), transparent 70%), radial-gradient(ellipse 40% 45% at 15% 20%, color-mix(in srgb, var(--blue) 14%, transparent), transparent 70%); z-index: -1; pointer-events: none; }
+.hero .lead { margin-top: 20px; font-size: 1.15rem; color: var(--muted); max-width: 52ch; }
+.hero-cta { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 28px; }
+.badges { display: flex; gap: 8px 18px; flex-wrap: wrap; margin-top: 28px; color: var(--muted); font-size: 0.93rem; font-weight: 500; }
+.badges span::before { content: "✓ "; color: var(--brand); font-weight: 700; }
+.scene { position: relative; display: grid; place-items: center; min-height: 460px; }
+.scene svg.fr { width: min(100%, 330px); height: auto; filter: drop-shadow(0 28px 30px rgba(15, 43, 42, 0.25)); animation: bob 6s ease-in-out infinite; }
+@keyframes bob { 50% { transform: translateY(-8px); } }
+.door { transform-box: fill-box; transform-origin: left center; animation: door 10s ease-in-out infinite; }
+@keyframes door { 0%, 12% { transform: none; } 28%, 62% { transform: scaleX(0.16) skewY(-4deg); } 80%, 100% { transform: none; } }
+.chip { position: absolute; background: var(--surface); border: 1px solid var(--line); box-shadow: var(--shadow); border-radius: 14px; padding: 10px 14px; font-size: 0.9rem; font-weight: 600; display: flex; align-items: center; gap: 8px; animation: floaty 5s ease-in-out infinite; }
+.chip i { width: 10px; height: 10px; border-radius: 50%; background: var(--ok); flex: none; }
+.chip.w i { background: var(--warn); } .chip.b i { background: var(--blue); } .chip.g i { background: var(--brand); }
+.c1 { top: 8%; left: 0; } .c2 { top: 30%; right: 0; animation-delay: -1.5s; } .c3 { bottom: 24%; left: 0; animation-delay: -3s; } .c4 { bottom: 6%; right: 4%; animation-delay: -2.2s; }
+@keyframes floaty { 50% { transform: translateY(-10px); } }
+
+/* stats */
+.stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; padding-block: 0 clamp(30px, 5vw, 56px); }
+.stat { background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 22px; }
+.stat b { display: block; white-space: nowrap; font-family: var(--font-display); font-size: clamp(1.5rem, 2.6vw, 1.95rem); font-weight: 800; color: var(--brand); line-height: 1.1; }
+.stat span { color: var(--muted); font-size: 0.95rem; }
+
+/* features */
+.grid3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 20px; padding: 24px; transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease; min-width: 0; }
+.card:hover { transform: translateY(-5px); box-shadow: var(--shadow); border-color: color-mix(in srgb, var(--brand) 50%, var(--line)); }
+.feat .ic { width: 52px; height: 52px; border-radius: 14px; background: var(--brand-soft); display: grid; place-items: center; margin-bottom: 16px; color: var(--brand); }
+.feat .ic svg { width: 28px; height: 28px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.feat p { color: var(--muted); font-size: 0.97rem; margin-top: 8px; }
+.tag { display: inline-block; margin-top: 14px; font-size: 0.78rem; font-weight: 700; padding: 3px 10px; border-radius: 99px; }
+.tag.now { background: var(--brand-soft); color: var(--ok); }
+.tag.soon { background: var(--surface2); color: var(--warn); }
+
+/* steps */
+.steps { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 18px; counter-reset: s; list-style: none; padding: 0; margin: 0; }
+.steps li { counter-increment: s; position: relative; padding-top: 58px; }
+.steps li::before { content: counter(s); position: absolute; top: 0; left: 0; width: 44px; height: 44px; border-radius: 50%; background: var(--brand); color: var(--brand-ink); display: grid; place-items: center; font-family: var(--font-display); font-weight: 800; }
+.steps li::after { content: ""; position: absolute; top: 21px; left: 56px; right: 8px; height: 2px; background: repeating-linear-gradient(90deg, var(--line) 0 6px, transparent 6px 12px); }
+.steps li:last-child::after { display: none; }
+.steps p { color: var(--muted); font-size: 0.97rem; margin-top: 6px; }
+
+/* compare */
+.table-scroll { overflow-x: auto; border: 1px solid var(--line); border-radius: 18px; background: var(--surface); }
+table { border-collapse: collapse; width: 100%; min-width: 560px; }
+th, td { text-align: left; padding: 14px 18px; border-bottom: 1px solid var(--line); font-size: 0.98rem; vertical-align: middle; }
+th { font-family: var(--font-display); font-size: 0.9rem; color: var(--muted); font-weight: 700; background: var(--surface2); }
+tr:last-child td { border-bottom: 0; }
+td.good { color: var(--ok); font-weight: 600; }
+td.old { color: var(--muted); }
+
+/* calculator */
+.calc { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 22px; }
+.result { background: linear-gradient(145deg, var(--brand), color-mix(in srgb, var(--brand) 55%, var(--blue))); color: #fff; border-radius: 22px; padding: 28px; display: grid; gap: 14px; align-content: center; }
+.result .big { font-family: var(--font-display); font-size: clamp(2rem, 4.5vw, 3rem); font-weight: 800; line-height: 1.1; }
+.result small { opacity: 0.9; font-size: 0.9rem; }
+.result .line { display: flex; justify-content: space-between; gap: 12px; border-top: 1px solid rgba(255,255,255,.3); padding-top: 12px; font-weight: 600; }
+
+/* faq */
+details { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 0 20px; }
+details + details { margin-top: 12px; }
+summary { cursor: pointer; font-weight: 600; padding: 18px 0; list-style: none; display: flex; justify-content: space-between; gap: 12px; align-items: center; }
+summary::-webkit-details-marker { display: none; }
+summary::after { content: "+"; font-size: 1.5rem; color: var(--brand); transition: transform .25s; }
+details[open] summary::after { transform: rotate(45deg); }
+details p { color: var(--muted); padding-bottom: 18px; }
+.cta-band { background: linear-gradient(135deg, var(--brand), color-mix(in srgb, var(--brand) 50%, var(--blue))); color: #fff; border-radius: 28px; padding: clamp(28px, 5vw, 56px); display: flex; gap: 24px; align-items: center; justify-content: space-between; flex-wrap: wrap; }
+.cta-band h2 { max-width: 20ch; }
+.cta-band .btn { background: #fff; color: #0A5C4D; }
+
+/* forms */
+.field { display: grid; gap: 6px; min-width: 0; }
+.field label, .legend { font-weight: 600; font-size: 0.95rem; }
+.field .hint { color: var(--muted); font-size: 0.85rem; }
+input[type="text"], input[type="email"], input[type="password"], input[type="tel"], select {
+  font: inherit; font-size: 1rem; width: 100%; min-height: 50px; padding: 0 14px; border-radius: 12px; border: 2px solid var(--line); background: var(--surface); color: var(--fg);
+}
+input:hover, select:hover { border-color: color-mix(in srgb, var(--brand) 50%, var(--line)); }
+input:focus, select:focus { outline: none; border-color: var(--brand); box-shadow: 0 0 0 4px color-mix(in srgb, var(--brand) 22%, transparent); }
+input[aria-invalid="true"], select[aria-invalid="true"] { border-color: var(--bad); }
+input.ok-f { border-color: var(--ok); }
+.err { min-height: 1.3em; font-size: 0.86rem; color: var(--bad); font-weight: 500; }
+.err.note { color: var(--warn); }
+.row2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px 18px; }
+.row3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px 18px; }
+.phone { display: grid; grid-template-columns: auto minmax(0, 1fr); }
+.phone span { display: grid; place-items: center; padding: 0 14px; border: 2px solid var(--line); border-right: 0; border-radius: 12px 0 0 12px; background: var(--surface2); font-weight: 600; }
+.phone input { border-radius: 0 12px 12px 0; }
+.pwbox { position: relative; }
+.pwbox input { padding-right: 90px; }
+.pwbox button { position: absolute; right: 6px; top: 6px; height: 38px; border: 0; background: var(--surface2); color: var(--fg); border-radius: 8px; padding: 0 12px; cursor: pointer; font: inherit; font-size: 0.85rem; font-weight: 600; }
+.meter { height: 6px; border-radius: 4px; background: var(--surface2); overflow: hidden; }
+.meter i { display: block; height: 100%; width: 0; background: var(--bad); transition: width .3s, background .3s; }
+.signup { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: 28px; align-items: start; }
+.formcard { background: var(--surface); border: 1px solid var(--line); border-radius: 24px; padding: clamp(20px, 4vw, 36px); box-shadow: var(--shadow); }
+.progress { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-bottom: 26px; }
+.progress div { border-top: 5px solid var(--line); padding-top: 8px; font-size: 0.88rem; font-weight: 600; color: var(--muted); transition: border-color .3s, color .3s; }
+.progress div.on { border-color: var(--brand); color: var(--fg); }
+.progress div.done { border-color: var(--brand); color: var(--brand); }
+.stepbox { display: grid; gap: 18px; animation: viewIn .4s ease both; }
+.stepbox h2 { font-size: 1.6rem; }
+.opts { display: grid; gap: 12px; }
+.opts.c2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.opt { position: relative; }
+.opt input { position: absolute; opacity: 0; inset: 0; width: 100%; height: 100%; margin: 0; cursor: pointer; }
+.opt .box { border: 2px solid var(--line); border-radius: 16px; padding: 14px 16px; display: flex; gap: 12px; align-items: center; background: var(--surface); transition: border-color .2s, background .2s, transform .2s; min-height: 62px; }
+.opt:hover .box { border-color: color-mix(in srgb, var(--brand) 50%, var(--line)); }
+.opt input:checked + .box { border-color: var(--brand); background: var(--brand-soft); }
+.opt input:focus-visible + .box { outline: 3px solid var(--blue); outline-offset: 2px; }
+.opt .box b { display: block; font-size: 0.98rem; line-height: 1.3; }
+.opt .box small { color: var(--muted); font-size: 0.85rem; }
+.opt .box svg.mini { width: 44px; height: 54px; flex: none; }
+.opt .chk { width: 22px; height: 22px; border-radius: 6px; border: 2px solid var(--line); flex: none; display: grid; place-items: center; color: transparent; font-size: 0.8rem; font-weight: 800; }
+.opt input:checked + .box .chk { background: var(--brand); border-color: var(--brand); color: var(--brand-ink); }
+.opt input[type="radio"] + .box .chk { border-radius: 50%; }
+.actions { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-top: 8px; }
+.side { display: grid; gap: 16px; }
+.side .card { padding: 20px; }
+.side ul { margin: 10px 0 0; padding-left: 20px; color: var(--muted); font-size: 0.95rem; }
+.side li + li { margin-top: 6px; }
+.success { text-align: center; display: grid; gap: 14px; justify-items: center; padding-block: 12px; }
+.success .tick { width: 84px; height: 84px; border-radius: 50%; background: var(--brand); display: grid; place-items: center; animation: pop .6s cubic-bezier(.2,1.4,.4,1) both; }
+.success .tick svg { width: 44px; height: 44px; stroke: var(--brand-ink); fill: none; stroke-width: 4; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 40; animation: draw .6s .3s ease both; }
+@keyframes pop { from { transform: scale(0); } to { transform: none; } }
+@keyframes draw { from { stroke-dashoffset: 40; } to { stroke-dashoffset: 0; } }
+
+/* models */
+.filter { display: flex; gap: 16px; flex-wrap: wrap; align-items: end; margin-bottom: 28px; background: var(--surface); border: 1px solid var(--line); border-radius: 20px; padding: 18px 20px; }
+.filter .field { max-width: 260px; flex: 1 1 200px; }
+.models { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 18px; }
+.model { display: grid; gap: 12px; align-content: start; position: relative; }
+.model.rec { border-color: var(--brand); box-shadow: 0 0 0 3px color-mix(in srgb, var(--brand) 25%, transparent); }
+.model .pic { background: linear-gradient(160deg, var(--brand-soft), var(--surface2)); border-radius: 16px; padding: 16px; display: grid; place-items: center; height: 250px; }
+.model .pic svg { height: 100%; width: auto; max-width: 100%; transition: transform .35s; }
+.model:hover .pic svg { transform: scale(1.05) rotate(-1.5deg); }
+.model ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; font-size: 0.93rem; color: var(--muted); }
+.model li b { color: var(--fg); }
+.model .reco { position: absolute; top: 14px; right: 14px; background: var(--brand); color: var(--brand-ink); font-size: 0.78rem; font-weight: 700; padding: 3px 10px; border-radius: 99px; }
+.fine { color: var(--muted); font-size: 0.85rem; margin-top: 18px; }
+
+/* panel */
+.kpis { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; margin-bottom: 20px; }
+.kpi { background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 18px; }
+.kpi span { color: var(--muted); font-size: 0.88rem; display: block; }
+.kpi b { font-family: var(--font-display); font-size: clamp(1.5rem, 3vw, 2rem); font-weight: 800; }
+.kpi.main { background: var(--brand); color: var(--brand-ink); border-color: var(--brand); }
+.kpi.main span { color: inherit; opacity: .9; }
+.bench { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr); gap: 20px; align-items: start; }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 22px; padding: 24px; min-width: 0; }
+.panel h3 { margin-bottom: 16px; }
+.ctl { display: grid; gap: 8px; margin-bottom: 20px; }
+.ctl label { display: flex; justify-content: space-between; gap: 8px; font-weight: 600; font-size: 0.95rem; }
+.ctl label b { color: var(--brand); font-variant-numeric: tabular-nums; }
+input[type="range"] { width: 100%; accent-color: var(--brand); height: 28px; }
+.pitem td { padding: 10px 10px 10px 0; }
+.pn { display: flex; align-items: center; gap: 10px; font-weight: 600; }
+.pn svg { width: 34px; height: 34px; flex: none; }
+.pn input { width: 20px; height: 20px; accent-color: var(--brand); }
+.days { display: flex; align-items: center; gap: 8px; min-width: 150px; }
+.days span { min-width: 2.4ch; text-align: right; font-weight: 600; font-variant-numeric: tabular-nums; }
+.pill { display: inline-block; font-size: 0.8rem; font-weight: 700; padding: 3px 10px; border-radius: 99px; background: var(--surface2); white-space: nowrap; }
+.pill.ok { color: var(--ok); } .pill.warn { color: var(--warn); } .pill.bad { color: var(--bad); } .pill.off { color: var(--muted); }
+.rm { background: none; border: 0; color: var(--bad); cursor: pointer; font-size: 1.2rem; padding: 4px 8px; border-radius: 8px; }
+.advice { margin-top: 16px; padding: 14px 16px; background: var(--brand-soft); border-radius: 14px; font-size: 0.97rem; }
+.bars { display: grid; gap: 12px; }
+.bar-row { display: grid; grid-template-columns: 120px minmax(0, 1fr) 54px; gap: 10px; align-items: center; font-size: 0.9rem; font-weight: 500; }
+.track { height: 14px; background: var(--surface2); border-radius: 8px; overflow: hidden; }
+.fill { height: 100%; background: var(--muted); border-radius: 8px; transition: width .35s ease; }
+.fill.ai { background: var(--brand); }
+.charts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; margin-top: 20px; }
+.chart h3 { font-size: 0.9rem; color: var(--muted); font-weight: 600; margin-bottom: 4px; font-family: var(--font-body); }
+svg.cv { display: block; width: 100%; height: auto; }
+.ax { stroke: var(--line); stroke-width: 1; }
+.ln { fill: none; stroke: var(--blue); stroke-width: 2.5; }
+.ct { fill: var(--muted); font-family: var(--font-body); font-size: 9px; }
+.mk-ai { stroke: var(--brand); stroke-width: 2; }
+.mk-man { stroke: var(--muted); stroke-width: 1.5; stroke-dasharray: 3 3; }
+.dot-ai { fill: var(--brand); }
+.shade { fill: var(--bad); opacity: 0.12; }
+.addp { margin-top: 22px; border-top: 1px solid var(--line); padding-top: 18px; }
+.addp .row3 { align-items: start; }
+.profile-badge { display: inline-flex; gap: 8px; align-items: center; background: var(--brand-soft); color: var(--brand); font-weight: 600; font-size: 0.93rem; padding: 6px 14px; border-radius: 99px; margin-top: 10px; }
+.note { margin-top: 18px; font-size: 0.9rem; color: var(--muted); border-left: 4px solid var(--warn); padding-left: 14px; max-width: 80ch; }
+
+/* account */
+.acc { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); gap: 22px; align-items: start; }
+.avatar { width: 64px; height: 64px; border-radius: 50%; background: linear-gradient(135deg, var(--brand), var(--blue)); color: #fff; display: grid; place-items: center; font-family: var(--font-display); font-weight: 800; font-size: 1.4rem; }
+.dl { display: grid; grid-template-columns: auto 1fr; gap: 8px 18px; margin: 16px 0 0; }
+.dl dt { color: var(--muted); font-size: 0.93rem; }
+.dl dd { margin: 0; font-weight: 600; word-break: break-word; }
+.empty { text-align: center; display: grid; gap: 14px; justify-items: center; padding: 40px 16px; }
+footer { border-top: 1px solid var(--line); padding-block: 28px 44px; color: var(--muted); font-size: 0.92rem; }
+
+@media (max-width: 960px) {
+  .hero, .calc, .signup, .bench, .acc { grid-template-columns: minmax(0, 1fr); }
+  .grid3 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .stats, .kpis, .models { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .steps { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .steps li::after { display: none; }
+  .scene { min-height: 400px; }
+}
+@media (max-width: 640px) {
+  body { font-size: 16.5px; }
+  nav { order: 3; width: 100%; margin-left: 0; overflow-x: auto; }
+  nav a { white-space: nowrap; }
+  .grid3, .stats, .kpis, .models, .steps, .row2, .row3, .opts.c2, .charts { grid-template-columns: minmax(0, 1fr); }
+  .stats, .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .top-right .btn.primary { padding: 0 14px; }
+  .bar-row { grid-template-columns: 96px minmax(0, 1fr) 48px; }
+  .chip { font-size: 0.82rem; padding: 8px 10px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+  .rv { transform: none; }
+}
+</style>
+</head>
+<body>
+
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <symbol id="i-milk" viewBox="0 0 48 48"><path d="M14 16l5-10h10l5 10v26a2 2 0 0 1-2 2H16a2 2 0 0 1-2-2z" fill="#fff" stroke="#8fb0c4" stroke-width="2" stroke-linejoin="round"/><rect x="15" y="24" width="18" height="14" fill="#4BA3E3"/><path d="M14 16h20" stroke="#8fb0c4" stroke-width="2"/></symbol>
+    <symbol id="i-apple" viewBox="0 0 48 48"><circle cx="18" cy="29" r="12" fill="#E5483A"/><circle cx="30" cy="29" r="12" fill="#E5483A"/><path d="M24 18c0-5 2-8 6-10" stroke="#6b4a2b" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M28 12c4-5 10-3 10-3 0 6-6 8-10 3z" fill="#3FA34D"/><ellipse cx="14" cy="25" rx="3" ry="5" fill="#fff" opacity=".35"/></symbol>
+    <symbol id="i-egg" viewBox="0 0 48 48"><ellipse cx="24" cy="28" rx="12" ry="15" fill="#FFF4DC" stroke="#E6CFA0" stroke-width="2"/><ellipse cx="19" cy="22" rx="3" ry="5" fill="#fff" opacity=".7"/></symbol>
+    <symbol id="i-veg" viewBox="0 0 48 48"><rect x="20" y="28" width="8" height="16" rx="2" fill="#8BC34A"/><circle cx="14" cy="24" r="9" fill="#2E9D4A"/><circle cx="34" cy="24" r="9" fill="#2E9D4A"/><circle cx="24" cy="16" r="11" fill="#38B255"/><circle cx="20" cy="13" r="3" fill="#5FD27A" opacity=".7"/></symbol>
+    <symbol id="i-chicken" viewBox="0 0 48 48"><ellipse cx="19" cy="19" rx="15" ry="12" transform="rotate(-35 19 19)" fill="#D98A3D"/><ellipse cx="14" cy="14" rx="6" ry="3" transform="rotate(-35 14 14)" fill="#F0B070" opacity=".7"/><path d="M28 28l11 11" stroke="#F3E9D8" stroke-width="6" stroke-linecap="round"/><circle cx="41" cy="41" r="4" fill="#F3E9D8"/></symbol>
+    <symbol id="i-fish" viewBox="0 0 48 48"><ellipse cx="22" cy="24" rx="17" ry="11" fill="#6FA8DC"/><path d="M36 24l11-10v20z" fill="#5B93C8"/><ellipse cx="22" cy="28" rx="13" ry="5" fill="#CFE4F5" opacity=".6"/><circle cx="12" cy="21" r="2.4" fill="#0b2a3a"/></symbol>
+    <symbol id="i-meal" viewBox="0 0 48 48"><rect x="6" y="20" width="36" height="22" rx="5" fill="#fff" stroke="#b9c9c8" stroke-width="2"/><rect x="4" y="14" width="40" height="9" rx="3" fill="#0A7F6B"/><circle cx="24" cy="32" r="6" fill="#F2B544"/><circle cx="17" cy="35" r="3" fill="#E5483A"/><circle cx="31" cy="35" r="3" fill="#3FA34D"/></symbol>
+    <symbol id="i-cheese" viewBox="0 0 48 48"><path d="M5 34L42 16v20a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2z" fill="#F6C945"/><path d="M5 34L42 16l-4-6L8 26z" fill="#FBE08A"/><circle cx="18" cy="33" r="3" fill="#E1AE23"/><circle cx="31" cy="30" r="2.4" fill="#E1AE23"/></symbol>
+  </defs>
+</svg>
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="#home"><span class="logo"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round"><path d="M12 2v20M4.5 6.5l15 11M19.5 6.5l-15 11"/></svg></span>Салқын AI</a>
+    <nav id="nav" aria-label="Мәзір">
+      <a href="#home" data-v="home">Басты бет</a>
+      <a href="#models" data-v="models">Модельдер</a>
+      <a href="#panel" data-v="panel">AI панель</a>
+    </nav>
+    <div class="top-right">
+      <button class="btn ghost icon-btn" id="theme-btn" type="button" aria-label="Түсті тақырыпты ауыстыру"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 3v18" /><path d="M12 3a9 9 0 0 1 0 18z" fill="currentColor"/></svg></button>
+      <a class="btn primary sm" id="auth-btn" href="#signup">Тіркелу</a>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+<!-- HOME -->
+<div class="view" data-view="home">
+  <div class="hero">
+    <div>
+      <h1>Тоңазытқышыңыз азықты бұзылудан өзі қорғайды</h1>
+      <p class="lead">Салқын AI әр өнімнің қалған сақталу мерзімін болжап, температураны қауіпсіз болатын ең жоғары деңгейге қояды. Азық аз тасталады, электр аз жұмсалады.</p>
+      <div class="hero-cta">
+        <a class="btn primary" href="#signup">Тіркелу</a>
+        <a class="btn ghost" href="#panel">AI панельді көру</a>
+      </div>
+      <div class="badges"><span>Өнімге қарай температура</span><span>Мерзімі туралы ескерту</span><span>Электр үнемі</span></div>
+    </div>
+    <div class="scene" id="hero-scene" aria-hidden="true">
+      <div class="chip g c1"><i></i>Температура 4,0 °C</div>
+      <div class="chip c2"><i></i>Сүт: 3 күн қалды</div>
+      <div class="chip w c3"><i></i>Тауық: бүгін жеңіз</div>
+      <div class="chip b c4"><i></i>Электр −9 %</div>
+    </div>
+  </div>
+
+  <div class="stats">
+    <div class="stat rv"><b data-count="19" data-suf=" %">19 %</b><span>тұтынушыға жеткен азық 2022 жылы қоқысқа түскен</span></div>
+    <div class="stat rv"><b data-count="1.05" data-suf=" млрд т" data-dec="2">1,05 млрд т</b><span>2022 жылы әлемде тасталған азық</span></div>
+    <div class="stat rv"><b data-count="10" data-pre="≤ " data-suf=" %">≤ 10 %</b><span>азық шығыны мен қалдығының әлемдік парниктік газдағы үлесі</span></div>
+    <div class="stat rv"><b data-count="24" data-suf=" сағ">24 сағ</b><span>тоңазытқыш тәулік бойы жұмыс істейді, әр градус маңызды</span></div>
+  </div>
+  <p class="fine" style="margin-top:-30px;margin-bottom:10px">Дереккөз: <a href="https://news.un.org/en/node/1148036" target="_blank" rel="noopener">UN News, 2024</a> · <a href="https://wedocs.unep.org/bitstream/handle/20.500.11822/45275/Food-Waste-Index-2024-key-messages.pdf?sequence=4" target="_blank" rel="noopener">UNEP Food Waste Index 2024</a></p>
+
+  <section>
+    <div class="sec-head rv"><p class="kicker">Мүмкіндіктер</p><h2>Бір тоңазытқыш, тоғыз ақылды функция</h2><p>«Демода» белгісі бар функциялар қазір AI панельде жұмыс істейді. «Жоспарда» белгісі бар функциялар аппараттық прототип кезеңінде қосылады.</p></div>
+    <div class="grid3" id="features"></div>
+  </section>
+
+  <section>
+    <div class="sec-head rv"><p class="kicker">Қалай жұмыс істейді</p><h2>Өлшейді, болжайды, басқарады</h2></div>
+    <ol class="steps rv">
+      <li><h3>Өлшейді</h3><p>Температура, ылғалдылық, есік ашылуы және өнім салмағы туралы деректер жиналады.</p></li>
+      <li><h3>Болжайды</h3><p>Модель әр өнімнің қалған сақталу мерзімін күнмен есептейді.</p></li>
+      <li><h3>Басқарады</h3><p>Барлық өнім қауіпсіз болатын ең жоғары температура қойылады, компрессор аз жұмыс істейді.</p></li>
+      <li><h3>Ескертеді</h3><p>«Сүтті бүгін ішіңіз» сияқты хабарлама келеді. Азық тасталмайды.</p></li>
+    </ol>
+  </section>
+
+  <section>
+    <div class="sec-head rv"><p class="kicker">Салыстыру</p><h2>Әдеттегі тоңазытқыш пен Салқын AI</h2></div>
+    <div class="table-scroll rv"><table>
+      <thead><tr><th>Көрсеткіш</th><th>Әдеттегі тоңазытқыш</th><th>Салқын AI</th></tr></thead>
+      <tbody>
+        <tr><td>Температура</td><td class="old">Бір мән, қолмен қойылады</td><td class="good">Өнімге қарай өзі өзгереді</td></tr>
+        <tr><td>Сақталу мерзімі</td><td class="old">Тек қаптамадағы күн</td><td class="good">Нақты жағдайға болжам</td></tr>
+        <tr><td>Бұзылу туралы ескерту</td><td class="old">Жоқ</td><td class="good">Бар, бұзылмай тұрып</td></tr>
+        <tr><td>Электр шығыны</td><td class="old">Қажеттен артық салқындату</td><td class="good">Қауіпсіз ең жоғары температура</td></tr>
+        <tr><td>Есік ашудың әсері</td><td class="old">Есепке алынбайды</td><td class="good">Болжамға қосылады</td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <section>
+    <div class="sec-head rv"><p class="kicker">Есептеуіш</p><h2>Отбасыңыз қанша үнемдей алады</h2><p>Өз санын жазыңыз. Нәтиже болжам: ол сіз таңдаған сценарийге негізделген, нақты өлшем емес.</p></div>
+    <div class="calc rv">
+      <div class="card">
+        <div class="row2">
+          <div class="field"><label for="k-waste">Айына тасталатын азық, кг</label><input id="k-waste" type="text" inputmode="numeric" data-rule="int" data-min="0" data-max="200" value="12" autocomplete="off"><p class="err" id="err-k-waste"></p></div>
+          <div class="field"><label for="k-price">1 кг азық бағасы, ₸</label><input id="k-price" type="text" inputmode="numeric" data-rule="int" data-min="100" data-max="20000" value="1500" autocomplete="off"><p class="err" id="err-k-price"></p></div>
+          <div class="field"><label for="k-kwh">Тоңазытқыш жылына, кВт·сағ</label><input id="k-kwh" type="text" inputmode="numeric" data-rule="int" data-min="50" data-max="1500" value="300" autocomplete="off"><p class="err" id="err-k-kwh"></p></div>
+          <div class="field"><label for="k-tariff">Тариф, ₸ / кВт·сағ</label><input id="k-tariff" type="text" inputmode="numeric" data-rule="int" data-min="1" data-max="300" value="25" autocomplete="off"><p class="err" id="err-k-tariff"></p></div>
+        </div>
+        <div class="field" style="margin-top:14px"><label for="k-cut">Азық шығыны қанша азаяды деп есептейміз</label>
+          <select id="k-cut"><option value="10">10 %, сақ сценарий</option><option value="20" selected>20 %, орташа сценарий</option><option value="30">30 %, оптимистік сценарий</option></select></div>
+        <p class="hint" style="color:var(--muted);font-size:.85rem;margin-top:12px">Бастапқы сандар мысал ретінде қойылған. Өз мәніңізді жазыңыз. Электр үнемі 9 % деп алынған (AI панельдегі әдепкі жағдай).</p>
+      </div>
+      <div class="result" aria-live="polite">
+        <small>Жылына болжамды үнем</small>
+        <div class="big" id="r-money">0 ₸</div>
+        <div class="line"><span>Аз тасталатын азық</span><span id="r-food">0 кг</span></div>
+        <div class="line"><span>Аз жұмсалатын электр</span><span id="r-kwh">0 кВт·сағ</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head rv"><p class="kicker">Сұрақтар</p><h2>Жиі қойылатын сұрақтар</h2></div>
+    <div class="rv" style="max-width:820px">
+      <details><summary>Салқын AI нақты өнім бе?</summary><p>Бұл студенттік жоба. Қазір жұмыс істейтін нұсқасы веб-прототип: AI панельде тоңазытқышты модельдеуге болады. Аппараттық прототип келесі кезеңде жасалады.</p></details>
+      <details><summary>Болжам қалай есептеледі?</summary><p>Бұзылу жылдамдығы температурамен өседі: 10 °C жылы болса, шамамен үш есе тез. Модель осы заңдылықты, есік ашу санын және бөлме температурасын ескереді. Келесі кезеңде ол нақты сенсор деректерімен оқытылады.</p></details>
+      <details><summary>Қауіпсіздік қалай сақталады?</summary><p>Ет пен балықтың температуралық шегі қатаң: одан жоғары көтерілмейді. Электр үнемі қауіпсіздіктен маңызды емес.</p></details>
+      <details><summary>Менің тоңазытқышыма қосуға бола ма?</summary><p>Тіркелу кезінде өз тоңазытқышыңыздың маркасын, жасын және көлемін жазасыз. Болашақта сенсор жинағы арқылы қолданыстағы тоңазытқышқа қосу жоспарланған.</p></details>
+      <details><summary>Деректерім қайда сақталады?</summary><p>Демо нұсқада тіркелу деректері тек сіздің браузеріңізде сақталады, серверге жіберілмейді. Құпия сөз мүлде сақталмайды.</p></details>
+    </div>
+  </section>
+
+  <section>
+    <div class="cta-band rv"><h2>Тоңазытқышыңызды ақылды етіп көріңіз</h2><a class="btn" href="#signup">Тіркелуді бастау</a></div>
+  </section>
+</div>
+
+<!-- MODELS -->
+<div class="view" data-view="models" hidden>
+  <section>
+    <div class="sec-head"><p class="kicker">Модельдер</p><h1 style="font-size:clamp(1.9rem,4.5vw,2.8rem)">Отбасыңызға лайық модельді таңдаңыз</h1><p>Отбасы мүшелерінің санын жазыңыз, біз сәйкес модельді белгілейміз.</p></div>
+    <div class="filter">
+      <div class="field"><label for="f-people">Отбасы мүшелерінің саны</label><input id="f-people" type="text" inputmode="numeric" data-rule="int" data-min="1" data-max="20" placeholder="Мысалы: 4" autocomplete="off"><p class="err" id="err-f-people"></p></div>
+      <p id="f-result" style="color:var(--muted);flex:2 1 260px;padding-bottom:26px">Санды жазсаңыз, ұсынылатын модель белгіленеді.</p>
+    </div>
+    <div class="models" id="models"></div>
+    <p class="fine">Модельдер жоба концепті. Көлем, сенсор саны және энергия класы жобалық мәндер, сатылымдағы өнімнің сипаттамасы емес.</p>
+  </section>
+</div>
+
+<!-- PANEL -->
+<div class="view" data-view="panel" hidden>
+  <section>
+    <div class="sec-head"><p class="kicker">AI панель</p><h1 style="font-size:clamp(1.9rem,4.5vw,2.8rem)">Тоңазытқышты модельдеңіз</h1><p>Өнімдерді белгілеп, қанша күн сақталғанын көрсетіңіз. Бөлме температурасын және есік ашу санын өзгертіп, AI шешімін қолмен қойылған температурамен салыстырыңыз.</p><div class="profile-badge" id="pbadge" hidden></div></div>
+    <div class="kpis" aria-live="polite">
+      <div class="kpi main"><span>AI таңдаған температура</span><b id="k-set">–</b></div>
+      <div class="kpi"><span>Электр үнемі (2 °C-қа қарағанда)</span><b id="k-save">–</b></div>
+      <div class="kpi"><span>Тез пайдалану керек өнім</span><b id="k-urg">–</b></div>
+      <div class="kpi"><span>Ең жақын мерзім</span><b id="k-min">–</b></div>
+    </div>
+    <div class="bench">
+      <div class="panel">
+        <h3>Жағдай</h3>
+        <div class="ctl"><label for="room">Бөлме температурасы <b id="room-v"></b></label><input id="room" type="range" min="16" max="32" step="1" value="24"></div>
+        <div class="ctl"><label for="doors">Есік ашу, тәулігіне <b id="doors-v"></b></label><input id="doors" type="range" min="0" max="60" step="1" value="20"></div>
+        <div class="ctl"><label for="manual">Қолмен қойылған температура <b id="manual-v"></b></label><input id="manual" type="range" min="0" max="10" step="0.5" value="4"></div>
+        <h3 style="margin-top:26px">Электр шығыны (2 °C = 100 %)</h3>
+        <div class="bars">
+          <div class="bar-row"><span>Тұрақты 2 °C</span><div class="track"><div class="fill" id="f-fixed"></div></div><b class="num" id="v-fixed"></b></div>
+          <div class="bar-row"><span>Қолмен</span><div class="track"><div class="fill" id="f-manual"></div></div><b class="num" id="v-manual"></b></div>
+          <div class="bar-row"><span>Салқын AI</span><div class="track"><div class="fill ai" id="f-ai"></div></div><b class="num" id="v-ai"></b></div>
+        </div>
+      </div>
+      <div class="panel">
+        <h3>Тоңазытқыштағы өнімдер</h3>
+        <div class="table-scroll" style="border:0;background:none"><table style="min-width:540px">
+          <thead><tr><th>Өнім</th><th>Сақталған күн</th><th>Қолмен: қалды</th><th>AI: қалды</th><th></th></tr></thead>
+          <tbody id="rows"></tbody>
+        </table></div>
+        <div class="advice" id="advice"></div>
+        <div class="addp">
+          <h3>Өз өнімімді қосу</h3>
+          <div class="row3">
+            <div class="field"><label for="np-name">Атауы</label><input id="np-name" type="text" data-rule="name" maxlength="24" placeholder="Мысалы: Йогурт" autocomplete="off"><p class="err" id="err-np-name"></p></div>
+            <div class="field"><label for="np-days">Мерзімі, күн</label><input id="np-days" type="text" inputmode="numeric" data-rule="int" data-min="1" data-max="60" placeholder="1–60" autocomplete="off"><p class="err" id="err-np-days"></p></div>
+            <div class="field"><label for="np-max">Шекті температура, °C</label><input id="np-max" type="text" inputmode="numeric" data-rule="int" data-min="0" data-max="10" placeholder="0–10" autocomplete="off"><p class="err" id="err-np-max"></p></div>
+          </div>
+          <button class="btn primary sm" id="np-add" type="button">Қосу</button>
+        </div>
+        <div class="charts">
+          <div class="chart"><h3>Ең тез бұзылатын өнімнің қалған күні, температураға қарай</h3><svg class="cv" id="c1" viewBox="0 0 320 190" role="img" aria-label="Қалған мерзім графигі"></svg></div>
+          <div class="chart"><h3>Электр шығыны (%), температураға қарай</h3><svg class="cv" id="c2" viewBox="0 0 320 190" role="img" aria-label="Электр шығыны графигі"></svg></div>
+        </div>
+      </div>
+    </div>
+    <p class="note">Бұл жобаның бағдарламалық прототипі. Сақталу мерзімдері жалпы ұсынымдардан алынған шамамен мәндер, электр үнемі жылу алмасу моделінен есептелген. Нақты тоңазытқышта өлшенген деректер емес. Формула: бұзылу жылдамдығы = 3^((T − 4) / 10), қалған мерзім = L₄ / жылдамдық − сақталған күн.</p>
+  </section>
+</div>
+
+<!-- SIGNUP -->
+<div class="view" data-view="signup" hidden>
+  <section>
+    <div class="sec-head"><p class="kicker">Тіркелу</p><h1 style="font-size:clamp(1.9rem,4.5vw,2.8rem)">Тоңазытқышыңызды қосыңыз</h1><p>Үш қадам: жеке деректер, тоңазытқыш, баптаулар. Бір минут алады.</p></div>
+    <div class="signup">
+      <form class="formcard" id="form" novalidate autocomplete="off">
+        <div class="progress" id="progress"><div class="on">1. Деректер</div><div>2. Тоңазытқыш</div><div>3. Баптаулар</div></div>
+
+        <div class="stepbox" data-step="1">
+          <h2>Жеке деректер</h2>
+          <div class="row2">
+            <div class="field"><label for="fn">Аты</label><input id="fn" type="text" data-rule="name" maxlength="30" placeholder="Мысалы: Айдар" autocomplete="given-name"><p class="err" id="err-fn"></p></div>
+            <div class="field"><label for="ln">Тегі</label><input id="ln" type="text" data-rule="name" maxlength="30" placeholder="Мысалы: Сәрсенов" autocomplete="family-name"><p class="err" id="err-ln"></p></div>
+          </div>
+          <div class="row2">
+            <div class="field"><label for="email">Электрондық пошта</label><input id="email" type="email" data-rule="email" maxlength="60" placeholder="name@mail.kz" autocomplete="email"><p class="err" id="err-email"></p></div>
+            <div class="field"><label for="phone">Телефон</label><div class="phone"><span>+7</span><input id="phone" type="tel" inputmode="numeric" data-rule="phone" placeholder="(777) 123-45-67" autocomplete="tel-national"></div><p class="err" id="err-phone"></p></div>
+          </div>
+          <div class="field"><label for="city">Қала</label>
+            <select id="city" data-rule="select"><option value="">Қаланы таңдаңыз</option><option>Астана</option><option>Алматы</option><option>Шымкент</option><option>Тараз</option><option>Қарағанды</option><option>Ақтөбе</option><option>Атырау</option><option>Павлодар</option><option>Өскемен</option><option>Семей</option><option>Қостанай</option><option>Басқа қала</option></select><p class="err" id="err-city"></p></div>
+          <div class="row2">
+            <div class="field"><label for="pw">Құпия сөз</label><div class="pwbox"><input id="pw" type="password" data-rule="pw" maxlength="40" placeholder="Кемінде 8 таңба" autocomplete="new-password"><button type="button" data-show="pw">Көрсету</button></div><div class="meter" aria-hidden="true"><i id="meter"></i></div><p class="err" id="err-pw"></p></div>
+            <div class="field"><label for="pw2">Құпия сөзді қайталаңыз</label><div class="pwbox"><input id="pw2" type="password" data-rule="pw2" maxlength="40" autocomplete="new-password"><button type="button" data-show="pw2">Көрсету</button></div><p class="err" id="err-pw2"></p></div>
+          </div>
+          <p class="hint" style="color:var(--muted);font-size:.85rem">Құпия сөзде әріп пен сан болуы керек. Демо нұсқада құпия сөз сақталмайды.</p>
+        </div>
+
+        <div class="stepbox" data-step="2" hidden>
+          <h2>Тоңазытқыш</h2>
+          <div class="opts c2" role="radiogroup" aria-label="Тоңазытқыш түрі">
+            <label class="opt"><input type="radio" name="mode" value="own" checked><div class="box"><span class="chk">✓</span><div><b>Менде тоңазытқыш бар</b><small>Қолданыстағы тоңазытқышты қосамын</small></div></div></label>
+            <label class="opt"><input type="radio" name="mode" value="new"><div class="box"><span class="chk">✓</span><div><b>Салқын AI моделін таңдаймын</b><small>Жаңа ақылды тоңазытқыш</small></div></div></label>
+          </div>
+          <div id="mode-own" class="stepbox" style="animation:none">
+            <div class="row2">
+              <div class="field"><label for="brand">Марка</label><select id="brand" data-rule="select" data-for="own"><option value="">Маркаңызды таңдаңыз</option><option>Samsung</option><option>LG</option><option>Bosch</option><option>Haier</option><option>Atlant</option><option>Beko</option><option>Indesit</option><option>Midea</option><option>Hisense</option><option>Басқа марка</option></select><p class="err" id="err-brand"></p></div>
+              <div class="field"><label for="mname">Модель атауы</label><input id="mname" type="text" data-rule="model" data-for="own" maxlength="24" placeholder="Мысалы: RB37" autocomplete="off"><p class="err" id="err-mname"></p></div>
+            </div>
+            <div class="row3">
+              <div class="field"><label for="year">Шығарылған жылы</label><input id="year" type="text" inputmode="numeric" data-rule="int" data-for="own" data-min="1990" data-max="2026" maxlength="4" placeholder="2018" autocomplete="off"><p class="err" id="err-year"></p></div>
+              <div class="field"><label for="vol">Көлемі, литр</label><input id="vol" type="text" inputmode="numeric" data-rule="int" data-for="own" data-min="50" data-max="800" maxlength="3" placeholder="300" autocomplete="off"><p class="err" id="err-vol"></p></div>
+              <div class="field"><label for="ftype">Түрі</label><select id="ftype" data-rule="select" data-for="own"><option value="">Таңдаңыз</option><option>Бір камералы</option><option>Екі камералы</option><option>Қатар есікті (side-by-side)</option></select><p class="err" id="err-ftype"></p></div>
+            </div>
+          </div>
+          <div id="mode-new" class="stepbox" style="animation:none" hidden>
+            <div class="legend">Модель</div>
+            <div class="opts c2" id="model-opts"></div>
+            <p class="err" id="err-model"></p>
+            <div class="legend">Түсі</div>
+            <div class="opts c2" style="grid-template-columns:repeat(3,minmax(0,1fr))">
+              <label class="opt"><input type="radio" name="color" value="Ақ" checked><div class="box"><span class="chk">✓</span><b>Ақ</b></div></label>
+              <label class="opt"><input type="radio" name="color" value="Күміс"><div class="box"><span class="chk">✓</span><b>Күміс</b></div></label>
+              <label class="opt"><input type="radio" name="color" value="Қара"><div class="box"><span class="chk">✓</span><b>Қара</b></div></label>
+            </div>
+          </div>
+        </div>
+
+        <div class="stepbox" data-step="3" hidden>
+          <h2>Баптаулар</h2>
+          <div class="row3">
+            <div class="field"><label for="people">Отбасы мүшесі</label><input id="people" type="text" inputmode="numeric" data-rule="int" data-min="1" data-max="20" maxlength="2" placeholder="4" autocomplete="off"><p class="err" id="err-people"></p></div>
+            <div class="field"><label for="room-s">Бөлме температурасы, °C</label><input id="room-s" type="text" inputmode="numeric" data-rule="int" data-min="10" data-max="35" maxlength="2" placeholder="24" autocomplete="off"><p class="err" id="err-room-s"></p></div>
+            <div class="field"><label for="doors-s">Есік ашу, тәулігіне</label><input id="doors-s" type="text" inputmode="numeric" data-rule="int" data-min="0" data-max="100" maxlength="3" placeholder="20" autocomplete="off"><p class="err" id="err-doors-s"></p></div>
+          </div>
+          <div><div class="legend" style="margin-bottom:10px">Қандай өнімдерді сақтайсыз?</div>
+            <div class="opts c2" id="types"></div><p class="err" id="err-types"></p></div>
+          <div><div class="legend" style="margin-bottom:10px">Хабарлама қайда келсін?</div>
+            <div class="opts c2" id="channels"></div><p class="err" id="err-channels"></p></div>
+          <label class="opt"><input type="checkbox" id="auto" checked><div class="box"><span class="chk">✓</span><div><b>Автоматты режим</b><small>AI температураны өзі реттейді</small></div></div></label>
+          <div><label class="opt"><input type="checkbox" id="agree"><div class="box"><span class="chk">✓</span><b style="font-weight:500">Деректерімді жоба аясында өңдеуге келісемін</b></div></label><p class="err" id="err-agree"></p></div>
+        </div>
+
+        <div class="stepbox success" id="done" hidden>
+          <div class="tick"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>
+          <h2>Тіркелу аяқталды</h2>
+          <p style="color:var(--muted)" id="done-text"></p>
+          <div class="hero-cta" style="justify-content:center"><a class="btn primary" href="#account">Кабинетке өту</a><a class="btn ghost" href="#panel">AI панельді ашу</a></div>
+        </div>
+
+        <div class="actions" id="actions">
+          <button class="btn ghost" type="button" id="back" hidden>Артқа</button>
+          <button class="btn primary" type="button" id="next" style="margin-left:auto">Келесі қадам</button>
+        </div>
+      </form>
+      <aside class="side">
+        <div class="card"><h3>Тіркелгенде не аласыз</h3><ul><li>Өз тоңазытқышыңыздың профилі</li><li>Өнімдер бойынша AI температура ұсынысы</li><li>Электр үнемінің болжамы</li><li>Бұзылу туралы ескерту арналарын таңдау</li></ul></div>
+        <div class="card"><h3>Демо нұсқа</h3><p style="color:var(--muted);font-size:.95rem;margin-top:8px">Деректер тек осы браузерде сақталады. Құпия сөз сақталмайды.</p></div>
+      </aside>
+    </div>
+  </section>
+</div>
+
+<!-- ACCOUNT -->
+<div class="view" data-view="account" hidden>
+  <section id="account-root"></section>
+</div>
+
+</main>
+<footer><div class="wrap">© 2026 Салқын AI · Студенттік жоба. Модельдер мен сипаттамалар концепт.</div></footer>
+
+<script>
+(function () {
+  "use strict";
+  function $(id) { return document.getElementById(id); }
+  function $$(s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); }
+  var mem = {};
+  function sget(k) { try { return localStorage.getItem(k); } catch (e) { return mem[k] || null; } }
+  function sset(k, v) { try { localStorage.setItem(k, v); } catch (e) { mem[k] = v; } }
+  function sdel(k) { try { localStorage.removeItem(k); } catch (e) { delete mem[k]; } }
+  function f1(x) { return (Math.round(x * 10) / 10).toString().replace(".", ","); }
+  function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
+
+  /* ---------- fridge illustration ---------- */
+  var gid = 0;
+  function fridge(o) {
+    o = o || {}; gid++;
+    var v = o.variant || "home", id = "g" + gid, col = o.color || "Күміс";
+    var pal = { "Ақ": ["#FFFFFF", "#E3EBEB"], "Күміс": ["#F1F5F6", "#C9D5D7"], "Қара": ["#4A5558", "#252D30"] }[col] || ["#F1F5F6", "#C9D5D7"];
+    var hnd = col === "Қара" ? "#8FA0A3" : "#9FB3B2";
+    var W = v === "max" ? 380 : 300, H = v === "mini" ? 360 : 520;
+    var bodyH = H - 24;
+    var s = '<svg class="fr" viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="Тоңазытқыш"><defs><linearGradient id="' + id + 'a" x1="0" x2="1"><stop offset="0" stop-color="' + pal[0] + '"/><stop offset="1" stop-color="' + pal[1] + '"/></linearGradient><linearGradient id="' + id + 'b" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#F4FBF9"/><stop offset="1" stop-color="#D6EBE6"/></linearGradient></defs>';
+    s += '<rect x="14" y="8" width="' + (W - 28) + '" height="' + bodyH + '" rx="24" fill="#B7C7C7"/>';
+    s += '<rect x="20" y="12" width="' + (W - 40) + '" height="' + (bodyH - 8) + '" rx="20" fill="url(#' + id + 'a)" stroke="#AFC0C0" stroke-width="1.5"/>';
+    var x0 = 32, w0 = W - 64;
+    if (v === "max") {
+      var hw = (w0 - 8) / 2;
+      s += '<rect x="' + x0 + '" y="26" width="' + hw + '" height="' + (bodyH - 40) + '" rx="14" fill="url(#' + id + 'a)" stroke="#AFC0C0"/>';
+      s += '<rect x="' + (x0 + hw + 8) + '" y="26" width="' + hw + '" height="' + (bodyH - 40) + '" rx="14" fill="url(#' + id + 'a)" stroke="#AFC0C0"/>';
+      s += '<rect x="' + (x0 + hw - 18) + '" y="180" width="8" height="120" rx="4" fill="' + hnd + '"/><rect x="' + (x0 + hw + 18) + '" y="180" width="8" height="120" rx="4" fill="' + hnd + '"/>';
+      s += '<rect x="' + (W / 2 - 52) + '" y="70" width="104" height="54" rx="10" fill="#0E2A2B"/><text x="' + W / 2 + '" y="106" text-anchor="middle" font-family="Montserrat,Arial,sans-serif" font-weight="800" font-size="26" fill="#6EF0CF">4,0°</text>';
+      s += '<circle cx="' + (W / 2) + '" cy="150" r="6" fill="#0E2A2B"/><circle cx="' + (W / 2) + '" cy="150" r="2.5" fill="#6EF0CF"/>';
+    } else if (v === "mini") {
+      s += '<rect x="' + x0 + '" y="26" width="' + w0 + '" height="70" rx="12" fill="url(#' + id + 'a)" stroke="#AFC0C0"/><rect x="' + x0 + '" y="104" width="' + w0 + '" height="' + (bodyH - 118) + '" rx="12" fill="url(#' + id + 'a)" stroke="#AFC0C0"/>';
+      s += '<rect x="46" y="116" width="8" height="70" rx="4" fill="' + hnd + '"/><rect x="46" y="60" width="8" height="24" rx="4" fill="' + hnd + '"/>';
+      s += '<rect x="96" y="44" width="110" height="34" rx="8" fill="#0E2A2B"/><text x="151" y="69" text-anchor="middle" font-family="Montserrat,Arial,sans-serif" font-weight="800" font-size="19" fill="#6EF0CF">4,0°</text>';
+    } else {
+      s += '<rect x="' + x0 + '" y="26" width="' + w0 + '" height="134" rx="14" fill="url(#' + id + 'a)" stroke="#AFC0C0"/>';
+      s += '<rect x="46" y="100" width="8" height="40" rx="4" fill="' + hnd + '"/>';
+      s += '<rect x="82" y="52" width="136" height="58" rx="10" fill="#0E2A2B"/><text x="150" y="91" text-anchor="middle" font-family="Montserrat,Arial,sans-serif" font-weight="800" font-size="27" fill="#6EF0CF">4,0°</text><text x="206" y="68" font-family="Montserrat,Arial,sans-serif" font-weight="800" font-size="10" fill="#6EF0CF">AI</text>';
+      if (v === "pro") s += '<circle cx="150" cy="130" r="7" fill="#0E2A2B"/><circle cx="150" cy="130" r="3" fill="#6EF0CF"/>';
+      if (o.anim) {
+        s += '<rect x="' + x0 + '" y="168" width="' + w0 + '" height="' + (bodyH - 182) + '" rx="12" fill="url(#' + id + 'b)"/>';
+        var rows = [196, 274, 352, 430], names = [["milk", "egg", "cheese", "apple"], ["meal", "fish", "chicken", "veg"], ["apple", "milk", "meal", "egg"], ["veg", "veg", "apple", "apple"]];
+        rows.forEach(function (y, ri) {
+          names[ri].forEach(function (n, ci) { s += '<use href="#i-' + n + '" x="' + (44 + ci * 54) + '" y="' + y + '" width="48" height="48"/>'; });
+          s += '<rect x="' + x0 + '" y="' + (y + 48) + '" width="' + w0 + '" height="5" fill="#B9D4CE"/>';
+        });
+        s += '<g class="door"><rect x="' + x0 + '" y="168" width="' + w0 + '" height="' + (bodyH - 182) + '" rx="14" fill="url(#' + id + 'a)" stroke="#AFC0C0"/><rect x="46" y="200" width="8" height="90" rx="4" fill="' + hnd + '"/></g>';
+      } else {
+        s += '<rect x="' + x0 + '" y="168" width="' + w0 + '" height="' + (bodyH - 182) + '" rx="14" fill="url(#' + id + 'a)" stroke="#AFC0C0"/><rect x="46" y="200" width="8" height="90" rx="4" fill="' + hnd + '"/>';
+      }
+    }
+    s += '<rect x="52" y="' + (H - 16) + '" width="34" height="8" rx="3" fill="#7F9393"/><rect x="' + (W - 86) + '" y="' + (H - 16) + '" width="34" height="8" rx="3" fill="#7F9393"/></svg>';
+    return s;
+  }
+  function sym(n, cls) { return '<svg class="' + (cls || "") + '" viewBox="0 0 48 48" aria-hidden="true"><use href="#i-' + n + '"/></svg>'; }
+
+  /* ---------- router ---------- */
+  var VIEWS = ["home", "models", "panel", "signup", "account"];
+  var cur = "";
+  function route() {
+    var h = (location.hash || "").replace("#", "");
+    if (VIEWS.indexOf(h) < 0) h = "home";
+    if (h === cur) return;
+    cur = h;
+    $$(".view").forEach(function (v) { v.hidden = v.getAttribute("data-view") !== h; });
+    $$("#nav a").forEach(function (a) { if (a.getAttribute("data-v") === h) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current"); });
+    window.scrollTo(0, 0);
+    if (h === "panel") enterPanel();
+    if (h === "account") renderAccount();
+    if (h === "signup") enterSignup();
+    if (h === "models") renderModels();
+    setTimeout(observe, 50);
+  }
+  window.addEventListener("hashchange", route);
+
+  /* reveal + counters */
+  var io = null;
+  function observe() {
+    if (!("IntersectionObserver" in window)) { $$(".rv").forEach(function (e) { e.classList.add("in"); }); return; }
+    if (!io) io = new IntersectionObserver(function (es) {
+      es.forEach(function (en) {
+        if (!en.isIntersecting) return;
+        en.target.classList.add("in"); io.unobserve(en.target);
+        var c = en.target.querySelector("[data-count]");
+        if (c) count(c);
+      });
+    }, { threshold: 0.15 });
+    $$(".rv:not(.in)").forEach(function (e) { io.observe(e); });
+  }
+  function count(el) {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    var to = parseFloat(el.getAttribute("data-count")), dec = +(el.getAttribute("data-dec") || 0), pre = el.getAttribute("data-pre") || "", suf = el.getAttribute("data-suf") || "", t0 = null;
+    function step(t) {
+      if (!t0) t0 = t; var p = Math.min(1, (t - t0) / 1100), e = 1 - Math.pow(1 - p, 3);
+      el.textContent = pre + (to * e).toFixed(dec).replace(".", ",") + suf;
+      if (p < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+
+  /* ---------- validation helpers ---------- */
+  var MSG = {
+    req: "Бұл жолды толтырыңыз",
+    name: "Тек әріп жазыңыз (2–30 таңба)",
+    email: "Дұрыс email жазыңыз, мысалы: name@mail.kz",
+    phone: "Нөмір 7-мен басталатын 10 саннан тұруы керек",
+    pw: "Кемінде 8 таңба, оның ішінде әріп және сан болсын",
+    pw2: "Құпия сөздер сәйкес емес",
+    sel: "Тізімнен таңдаңыз",
+    model: "Әріп, сан, сызықша жазыңыз",
+    onlyLetters: "Мұнда тек әріп жазуға болады",
+    onlyDigits: "Мұнда тек сан жазуға болады"
+  };
+  var noteTimer = {};
+  function setErr(id, msg, isNote) {
+    var e = $("err-" + id), el = $(id); if (!e) return;
+    e.textContent = msg || ""; e.className = "err" + (isNote ? " note" : "");
+    if (el && !isNote) { if (msg) el.setAttribute("aria-invalid", "true"); else el.removeAttribute("aria-invalid"); }
+  }
+  function flash(id, msg) {
+    setErr(id, msg, true); clearTimeout(noteTimer[id]);
+    noteTimer[id] = setTimeout(function () { var e = $("err-" + id); if (e && e.classList.contains("note")) setErr(id, ""); }, 2200);
+  }
+  function fmtPhone(d) {
+    var s = "";
+    if (d.length > 0) s += "(" + d.slice(0, 3);
+    if (d.length >= 3) s += ")";
+    if (d.length > 3) s += " " + d.slice(3, 6);
+    if (d.length > 6) s += "-" + d.slice(6, 8);
+    if (d.length > 8) s += "-" + d.slice(8, 10);
+    return s;
+  }
+  function validateEl(el) {
+    var r = el.getAttribute("data-rule"), v = (el.value || "").trim(), id = el.id;
+    var m = "";
+    if (r === "select") { if (!v) m = MSG.sel; }
+    else if (!v) m = MSG.req;
+    else if (r === "name") { if (!/^[\p{L}][\p{L}'’\- ]{1,29}$/u.test(v)) m = MSG.name; }
+    else if (r === "email") { if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v)) m = MSG.email; }
+    else if (r === "phone") { var d = v.replace(/\D/g, ""); if (d.length !== 10 || d[0] !== "7") m = MSG.phone; }
+    else if (r === "pw") { if (v.length < 8 || !/\p{L}/u.test(v) || !/\d/.test(v)) m = MSG.pw; }
+    else if (r === "pw2") { if (v !== $("pw").value) m = MSG.pw2; }
+    else if (r === "model") { if (!/^[\p{L}\d][\p{L}\d \-.]{0,23}$/u.test(v)) m = MSG.model; }
+    else if (r === "int") {
+      var mn = +el.getAttribute("data-min"), mx = +el.getAttribute("data-max"), n = +v;
+      if (!/^\d+$/.test(v) || n < mn || n > mx) m = mn + "–" + mx + " аралығындағы сан жазыңыз";
+    }
+    setErr(id, m);
+    if (!m && v && r !== "select") el.classList.add("ok-f"); else el.classList.remove("ok-f");
+    return !m;
+  }
+  var touched = {};
+  function wireInputs(root) {
+    $$("[data-rule]", root).forEach(function (el) {
+      var r = el.getAttribute("data-rule");
+      el.addEventListener("input", function () {
+        var before = el.value, after = before;
+        if (r === "name") { after = before.replace(/[^\p{L}'’\- ]/gu, ""); if (after !== before) flash(el.id, MSG.onlyLetters); }
+        else if (r === "int") { after = before.replace(/\D/g, ""); if (after !== before) flash(el.id, MSG.onlyDigits); }
+        else if (r === "phone") { var d = before.replace(/\D/g, ""); if (/[^\d\s()\-]/.test(before)) flash(el.id, MSG.onlyDigits); after = fmtPhone(d.slice(0, 10)); }
+        else if (r === "model") { after = before.replace(/[^\p{L}\d \-.]/gu, ""); }
+        else if (r === "email") { after = before.replace(/\s/g, ""); }
+        if (after !== before) el.value = after;
+        if (r === "pw") { meter(el.value); if (touched.pw2) validateEl($("pw2")); }
+        if (touched[el.id]) validateEl(el);
+      });
+      el.addEventListener("blur", function () { if (el.value || touched[el.id]) { touched[el.id] = 1; validateEl(el); } });
+      el.addEventListener("change", function () { if (r === "select") { touched[el.id] = 1; validateEl(el); } });
+    });
+  }
+  function meter(v) {
+    var s = 0; if (v.length >= 8) s++; if (/\p{L}/u.test(v) && /\d/.test(v)) s++; if (v.length >= 12) s++; if (/[^\p{L}\d]/u.test(v)) s++;
+    var m = $("meter"); m.style.width = (v ? Math.max(15, s * 25) : 0) + "%"; m.style.background = s <= 1 ? "var(--bad)" : s === 2 ? "var(--warn)" : "var(--ok)";
+  }
+
+  /* ---------- features ---------- */
+  var ICONS = {
+    brain: '<path d="M9 4a3 3 0 0 0-3 3 3 3 0 0 0-2 5 3 3 0 0 0 2 5 3 3 0 0 0 6 1V4a3 3 0 0 0-3 0zM15 4a3 3 0 0 1 3 3 3 3 0 0 1 2 5 3 3 0 0 1-2 5 3 3 0 0 1-6 1"/>',
+    bolt: '<path d="M13 2L4 14h7l-1 8 9-12h-7z"/>',
+    bell: '<path d="M6 17V11a6 6 0 0 1 12 0v6l2 2H4zM10 21a2 2 0 0 0 4 0"/>',
+    shield: '<path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M8.5 12l2.5 2.5L16 9.5"/>',
+    door: '<rect x="5" y="3" width="14" height="18" rx="2"/><path d="M15 11v3"/>',
+    list: '<path d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01"/>',
+    gas: '<path d="M4 9c3-3 5 3 8 0s5 3 8 0M4 15c3-3 5 3 8 0s5 3 8 0"/>',
+    chart: '<path d="M4 20V4M4 20h16M8 16v-4M12 16V8M16 16v-6"/>',
+    users: '<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c0-4 3-6 6.5-6s6.500 2 6.500 6M16 4.500a3.500 3.500 0 0 1 0 7M18 14c2.500.7 3.500 2.700 3.500 6"/>'
+  };
+  var FEATS = [
+    ["brain", "AI болжам", "Әр өнімнің қалған сақталу мерзімін күнмен болжайды.", 1],
+    ["bolt", "Электр үнемі", "Барлық өнім қауіпсіз болатын ең жоғары температураны таңдайды.", 1],
+    ["shield", "Қауіпсіздік шегі", "Ет пен балық үшін температура шегі қатаң, үнемге бола бұзылмайды.", 1],
+    ["list", "Өнім тізімі", "Өнімдерді қосыңыз, сақталған күнін көріп отырыңыз.", 1],
+    ["door", "Есік әсері", "Есік қаншалықты жиі ашылса, болжам соншалықты дәл түзетіледі.", 1],
+    ["bell", "Ақылды хабарлама", "Telegram, WhatsApp немесе email арқылы «бүгін жеңіз» ескертуі.", 0],
+    ["gas", "Газ датчигі", "NH₃ және VOC деңгейі бойынша бұзылуды ерте байқайды.", 0],
+    ["chart", "Шығын есебі", "Күн мен ай бойынша электр шығыны және үнем есебі.", 0],
+    ["users", "Отбасымен бөлісу", "Бір тоңазытқышты бірнеше адам бірге қадағалайды.", 0]
+  ];
+  $("features").innerHTML = FEATS.map(function (f) {
+    return '<div class="card feat rv"><div class="ic"><svg viewBox="0 0 24 24">' + ICONS[f[0]] + '</svg></div><h3>' + f[1] + '</h3><p>' + f[2] + '</p><span class="tag ' + (f[3] ? "now" : "soon") + '">' + (f[3] ? "Демода бар" : "Жоспарда") + '</span></div>';
+  }).join("");
+
+  /* hero scene */
+  $("hero-scene").insertAdjacentHTML("afterbegin", fridge({ variant: "home", anim: true, color: "Күміс" }));
+
+  /* ---------- models ---------- */
+  var MODELS = [
+    { id: "m1", name: "Салқын Mini M1", v: "mini", l: 180, cls: "A++", sens: 4, who: "1–2 адам", min: 1, max: 2, feat: "Сүт пен көкөніс режимі" },
+    { id: "h2", name: "Салқын Home H2", v: "home", l: 320, cls: "A+++", sens: 8, who: "3–4 адам", min: 3, max: 4, feat: "Telegram хабарламасы" },
+    { id: "p3", name: "Салқын Pro P3", v: "pro", l: 450, cls: "A+++", sens: 12, who: "5–6 адам", min: 5, max: 6, feat: "Газ датчигі, ішкі камера" },
+    { id: "x4", name: "Салқын Max X4", v: "max", l: 600, cls: "A+++", sens: 16, who: "7 адам және одан көп", min: 7, max: 99, feat: "Екі аймақты салқындату" }
+  ];
+  var recId = "";
+  function renderModels() {
+    $("models").innerHTML = MODELS.map(function (m) {
+      return '<div class="card model' + (recId === m.id ? " rec" : "") + '">' + (recId === m.id ? '<span class="reco">Сізге лайық</span>' : "") +
+        '<div class="pic">' + fridge({ variant: m.v }) + '</div><h3>' + m.name + '</h3>' +
+        '<ul><li><b>' + m.l + ' л</b> · ' + m.who + '</li><li>Энергия класы: <b>' + m.cls + '</b></li><li>Сенсор саны: <b>' + m.sens + '</b></li><li>' + m.feat + '</li></ul>' +
+        '<button class="btn primary sm" type="button" data-pick="' + m.id + '">Таңдау</button></div>';
+    }).join("");
+    $$("[data-pick]").forEach(function (b) { b.addEventListener("click", function () { pickModel = b.getAttribute("data-pick"); location.hash = "#signup"; }); });
+  }
+  var pickModel = "";
+  var fp = $("f-people");
+  fp.addEventListener("input", function () {
+    var v = fp.value.trim(), n = +v;
+    if (!v || !/^\d+$/.test(v) || n < 1 || n > 20) { recId = ""; $("f-result").textContent = v ? "1–20 аралығындағы сан жазыңыз." : "Санды жазсаңыз, ұсынылатын модель белгіленеді."; }
+    else { var m = MODELS.filter(function (x) { return n >= x.min && n <= x.max; })[0]; recId = m.id; $("f-result").innerHTML = "<b style=\"color:var(--fg)\">" + n + " адамға ұсынылады:</b> " + m.name + ", " + m.l + " л."; }
+    renderModels();
+  });
+
+  /* ---------- core model ---------- */
+  var BASE = [
+    { id: "milk", name: "Сүт (ашылған)", L: 7, maxT: 5, on: true, days: 3, icon: "milk" },
+    { id: "chicken", name: "Шикі тауық еті", L: 2, maxT: 4, on: false, days: 1, icon: "chicken" },
+    { id: "fish", name: "Шикі балық", L: 1.5, maxT: 3, on: false, days: 0, icon: "fish" },
+    { id: "meal", name: "Піскен тағам", L: 4, maxT: 5, on: true, days: 1, icon: "meal" },
+    { id: "veg", name: "Көкөніс", L: 7, maxT: 8, on: true, days: 4, icon: "veg" },
+    { id: "apple", name: "Алма", L: 28, maxT: 8, on: true, days: 10, icon: "apple" }
+  ];
+  var P = BASE.map(function (p) { return Object.assign({}, p); });
+  var S = { room: 24, doors: 20, manual: 4 };
+  function teff(s, room, doors) { return s + 0.0025 * doors * Math.max(0, room - s); }
+  function rate(T) { return Math.pow(3, (T - 4) / 10); }
+  function remainC(p, s, room, doors) { return p.L / rate(teff(s, room, doors)) - p.days; }
+  function energyC(s, room) { return (room - s) / (room - 2) * 100; }
+  function optimizeC(items, room, doors) {
+    if (!items.length) return { s: 6, urgent: [], limiter: null };
+    var urgent = items.filter(function (p) { return remainC(p, 0, room, doors) < 1; });
+    var bound = items.filter(function (p) { return urgent.indexOf(p) < 0; });
+    var best = 0, limiter = null, s;
+    for (s = 0; s <= 10; s += 0.5) {
+      var ok = bound.every(function (p) { return teff(s, room, doors) <= p.maxT && remainC(p, s, room, doors) >= 1; });
+      if (ok) best = s; else break;
+    }
+    if (best < 10) limiter = bound.filter(function (p) { var n = best + 0.5; return teff(n, room, doors) > p.maxT || remainC(p, n, room, doors) < 1; })[0] || null;
+    return { s: best, urgent: urgent, limiter: limiter };
+  }
+  function remain(p, s) { return remainC(p, s, S.room, S.doors); }
+  function status(p, s) {
+    var r = remain(p, s);
+    if (teff(s, S.room, S.doors) > p.maxT) return { c: "bad", t: "тым жылы", r: r };
+    if (r <= 0) return { c: "bad", t: "бұзылған", r: r };
+    if (r < 1) return { c: "warn", t: "бүгін", r: r };
+    if (r < 2) return { c: "warn", t: "жақында", r: r };
+    return { c: "ok", t: "жақсы", r: r };
+  }
+
+  /* ---------- panel ---------- */
+  var cid = 0;
+  function buildRows() {
+    var tb = $("rows"); tb.innerHTML = "";
+    P.forEach(function (p) {
+      var mx = Math.min(30, Math.ceil(p.L)), tr = document.createElement("tr");
+      tr.className = "pitem";
+      tr.innerHTML = '<td><label class="pn"><input type="checkbox" id="on-' + p.id + '"' + (p.on ? " checked" : "") + ' aria-label="' + esc(p.name) + '">' + sym(p.icon) + '<span>' + esc(p.name) + '</span></label></td>' +
+        '<td><div class="days"><input type="range" id="days-' + p.id + '" min="0" max="' + mx + '" step="1" value="' + Math.min(p.days, mx) + '" aria-label="Сақталған күн: ' + esc(p.name) + '"><span id="dv-' + p.id + '"></span></div></td>' +
+        '<td id="m-' + p.id + '"></td><td id="a-' + p.id + '"></td><td>' + (p.custom ? '<button class="rm" type="button" id="rm-' + p.id + '" aria-label="Өшіру">×</button>' : "") + '</td>';
+      tb.appendChild(tr);
+      $("on-" + p.id).addEventListener("change", function (e) { p.on = e.target.checked; updatePanel(); });
+      $("days-" + p.id).addEventListener("input", function (e) { p.days = +e.target.value; updatePanel(); });
+      if (p.custom) $("rm-" + p.id).addEventListener("click", function () { P = P.filter(function (x) { return x !== p; }); buildRows(); updatePanel(); });
+    });
+  }
+  function cell(p, s) {
+    if (!p.on) return '<span class="pill off">жоқ</span>';
+    var st = status(p, s);
+    return '<b class="num">' + (st.r > 0 ? f1(st.r) + " күн" : "0") + '</b> <span class="pill ' + st.c + '">' + st.t + '</span>';
+  }
+  function svgChart(el, o) {
+    var W = 320, H = 190, m = { l: 34, r: 10, t: 12, b: 30 }, pw = W - m.l - m.r, ph = H - m.t - m.b;
+    function X(x) { return m.l + x / 10 * pw; }
+    function Y(y) { return m.t + ph - (Math.min(o.ymax, Math.max(o.ymin, y)) - o.ymin) / (o.ymax - o.ymin) * ph; }
+    var g = "", i;
+    for (i = 0; i <= 4; i++) { var yv = o.ymin + (o.ymax - o.ymin) * i / 4; g += '<line class="ax" x1="' + m.l + '" x2="' + (W - m.r) + '" y1="' + Y(yv) + '" y2="' + Y(yv) + '"/><text class="ct" x="' + (m.l - 5) + '" y="' + (Y(yv) + 3) + '" text-anchor="end">' + Math.round(yv) + '</text>'; }
+    for (i = 0; i <= 10; i += 2) g += '<text class="ct" x="' + X(i) + '" y="' + (H - 14) + '" text-anchor="middle">' + i + '</text>';
+    g += '<text class="ct" x="' + (m.l + pw / 2) + '" y="' + (H - 2) + '" text-anchor="middle">температура, °C</text>';
+    if (o.shade !== null && o.shade < 10) g += '<rect class="shade" x="' + X(o.shade + 0.25) + '" y="' + m.t + '" width="' + (X(10) - X(o.shade + 0.25)) + '" height="' + ph + '"/>';
+    g += '<path class="ln" d="' + o.pts.map(function (p, k) { return (k ? "L" : "M") + X(p[0]).toFixed(1) + " " + Y(p[1]).toFixed(1); }).join("") + '"/>';
+    g += '<line class="mk-man" x1="' + X(S.manual) + '" x2="' + X(S.manual) + '" y1="' + m.t + '" y2="' + (m.t + ph) + '"/>';
+    if (o.ai !== null) {
+      g += '<line class="mk-ai" x1="' + X(o.ai) + '" x2="' + X(o.ai) + '" y1="' + m.t + '" y2="' + (m.t + ph) + '"/><circle class="dot-ai" cx="' + X(o.ai) + '" cy="' + Y(o.f(o.ai)) + '" r="4.5"/>';
+      g += '<text class="ct" x="' + Math.min(W - 24, X(o.ai) + 5) + '" y="' + (m.t + 9) + '" style="fill:var(--brand);font-weight:700">AI</text>';
+    }
+    el.innerHTML = g;
+  }
+  function updatePanel() {
+    S.room = +$("room").value; S.doors = +$("doors").value; S.manual = +$("manual").value;
+    $("room-v").textContent = S.room + " °C"; $("doors-v").textContent = S.doors; $("manual-v").textContent = f1(S.manual) + " °C";
+    var act = P.filter(function (p) { return p.on; }), opt = optimizeC(act, S.room, S.doors);
+    P.forEach(function (p) { $("dv-" + p.id).textContent = p.days; $("m-" + p.id).innerHTML = cell(p, S.manual); $("a-" + p.id).innerHTML = cell(p, opt.s); });
+    var eMan = energyC(S.manual, S.room), eAi = energyC(opt.s, S.room);
+    [["fixed", 100], ["manual", eMan], ["ai", eAi]].forEach(function (a) { $("f-" + a[0]).style.width = Math.max(0, Math.min(100, a[1] / 130 * 100)) + "%"; $("v-" + a[0]).textContent = Math.round(a[1]) + " %"; });
+    var save = 100 - eAi;
+    $("k-set").textContent = f1(opt.s) + " °C";
+    $("k-save").textContent = (save >= 0 ? "" : "−") + Math.abs(Math.round(save)) + " %";
+    $("k-urg").textContent = act.length ? opt.urgent.length + " / " + act.length : "0";
+    var mn = act.length ? Math.min.apply(null, act.map(function (p) { return remainC(p, opt.s, S.room, S.doors); })) : null;
+    $("k-min").textContent = mn === null ? "–" : (mn > 0 ? f1(mn) + " күн" : "0");
+    var adv;
+    if (!act.length) adv = "Тоңазытқыш бос. Өнім қосыңыз, AI температураны есептейді.";
+    else {
+      var diff = Math.round(eAi - eMan);
+      adv = "AI температураны " + f1(opt.s) + " °C-қа қояды. Қолмен қойылған " + f1(S.manual) + " °C-пен салыстырғанда электр шығыны " + (diff > 0 ? "+" : "") + diff + " % өзгереді.";
+      var soon = act.filter(function (p) { return remainC(p, opt.s, S.room, S.doors) < 2; }).map(function (p) { return p.name; });
+      if (soon.length) adv += " Бірінші пайдаланыңыз: " + soon.join(", ") + ".";
+      if (opt.limiter) adv += " Шектеуші өнім: " + opt.limiter.name + ". Температураны жоғарылатсақ, ол қауіпсіз шектен шығады.";
+      var hot = act.filter(function (p) { return teff(S.manual, S.room, S.doors) > p.maxT; })[0];
+      if (hot) adv += " Қолмен қойылған температура «" + hot.name + "» үшін тым жоғары: ішкі температура " + f1(teff(S.manual, S.room, S.doors)) + " °C болады.";
+    }
+    $("advice").textContent = adv;
+    var p1 = [], p2 = [], s, ymax = 4;
+    for (s = 0; s <= 10; s += 0.5) {
+      var v = act.length ? Math.min.apply(null, act.map(function (p) { return remain(p, s); })) : 0;
+      p1.push([s, v]); p2.push([s, energyC(s, S.room)]); if (v > ymax) ymax = v;
+    }
+    ymax = Math.min(12, Math.ceil(ymax / 4) * 4);
+    svgChart($("c1"), { pts: p1, ymin: 0, ymax: ymax, ai: act.length ? opt.s : null, shade: act.length && opt.s < 10 ? opt.s : null, f: function (x) { return act.length ? Math.min.apply(null, act.map(function (p) { return remain(p, x); })) : 0; } });
+    svgChart($("c2"), { pts: p2, ymin: 60, ymax: 120, ai: opt.s, shade: null, f: function (x) { return energyC(x, S.room); } });
+  }
+  ["room", "doors", "manual"].forEach(function (id) { $(id).addEventListener("input", updatePanel); });
+  wireInputs($("np-name").closest(".addp"));
+  $("np-add").addEventListener("click", function () {
+    var ok = ["np-name", "np-days", "np-max"].map(function (id) { touched[id] = 1; return validateEl($(id)); }).every(Boolean);
+    if (!ok) return;
+    cid++;
+    P.push({ id: "c" + cid, name: $("np-name").value.trim(), L: +$("np-days").value, maxT: +$("np-max").value, on: true, days: 0, icon: "meal", custom: true });
+    ["np-name", "np-days", "np-max"].forEach(function (id) { $(id).value = ""; $(id).classList.remove("ok-f"); touched[id] = 0; });
+    buildRows(); updatePanel();
+  });
+  var panelBuilt = false;
+  function enterPanel() {
+    var u = loadUser();
+    if (u) {
+      $("room").value = u.room; $("doors").value = u.doors;
+      $("pbadge").hidden = false; $("pbadge").textContent = "Сіздің тоңазытқышыңыз: " + fridgeName(u);
+      var map = { dairy: "milk", meat: "chicken", fish: "fish", veg: "veg", fruit: "apple", cooked: "meal" };
+      P.filter(function (p) { return !p.custom; }).forEach(function (p) { p.on = u.types.some(function (t) { return map[t] === p.id; }); });
+    } else $("pbadge").hidden = true;
+    buildRows(); updatePanel(); panelBuilt = true;
+  }
+
+  /* ---------- calculator ---------- */
+  var kin = ["k-waste", "k-price", "k-kwh", "k-tariff"];
+  wireInputs($("k-waste").closest(".calc"));
+  function calc() {
+    var okAll = kin.every(function (id) { return /^\d+$/.test($(id).value) && +$(id).value >= +$(id).getAttribute("data-min") && +$(id).value <= +$(id).getAttribute("data-max"); });
+    if (!okAll) return;
+    var cut = +$("k-cut").value / 100, food = +$("k-waste").value * 12 * cut, kwh = +$("k-kwh").value * 0.09;
+    var money = food * +$("k-price").value + kwh * +$("k-tariff").value;
+    $("r-money").textContent = Math.round(money).toLocaleString("ru-RU").replace(/ /g, " ") + " ₸";
+    $("r-food").textContent = f1(food) + " кг"; $("r-kwh").textContent = f1(kwh) + " кВт·сағ";
+  }
+  kin.concat(["k-cut"]).forEach(function (id) { $(id).addEventListener("input", calc); $(id).addEventListener("change", calc); });
+  calc();
+
+  /* ---------- signup ---------- */
+  var TYPES = [["dairy", "Сүт өнімдері", "milk"], ["meat", "Ет, құс еті", "chicken"], ["fish", "Балық", "fish"], ["veg", "Көкөніс", "veg"], ["fruit", "Жеміс", "apple"], ["cooked", "Піскен тағам", "meal"]];
+  var CHANS = [["tg", "Telegram"], ["wa", "WhatsApp"], ["em", "Email"], ["sms", "SMS"]];
+  $("types").innerHTML = TYPES.map(function (t) { return '<label class="opt"><input type="checkbox" name="types" value="' + t[0] + '"><div class="box"><span class="chk">✓</span>' + sym(t[2], "mini").replace('class="mini"', 'class="mini" style="width:34px;height:34px"') + '<b>' + t[1] + '</b></div></label>'; }).join("");
+  $("channels").innerHTML = CHANS.map(function (c) { return '<label class="opt"><input type="checkbox" name="channels" value="' + c[0] + '"><div class="box"><span class="chk">✓</span><b>' + c[1] + '</b></div></label>'; }).join("");
+  $("model-opts").innerHTML = MODELS.map(function (m) { return '<label class="opt"><input type="radio" name="model" value="' + m.id + '"><div class="box"><span class="chk">✓</span><div><b>' + m.name + '</b><small>' + m.l + ' л · ' + m.who + '</small></div></div></label>'; }).join("");
+  wireInputs($("form"));
+  $$("[data-show]").forEach(function (b) {
+    b.addEventListener("click", function () { var el = $(b.getAttribute("data-show")), show = el.type === "password"; el.type = show ? "text" : "password"; b.textContent = show ? "Жасыру" : "Көрсету"; });
+  });
+  var step = 1;
+  function modeVal() { return $$('input[name="mode"]').filter(function (r) { return r.checked; })[0].value; }
+  function syncMode() { var own = modeVal() === "own"; $("mode-own").hidden = !own; $("mode-new").hidden = own; }
+  $$('input[name="mode"]').forEach(function (r) { r.addEventListener("change", syncMode); });
+  function showStep(n) {
+    step = n;
+    $$(".stepbox[data-step]").forEach(function (b) { b.hidden = +b.getAttribute("data-step") !== n; });
+    $$("#progress div").forEach(function (d, i) { d.className = i + 1 === n ? "on" : i + 1 < n ? "done" : ""; });
+    $("back").hidden = n === 1;
+    $("next").textContent = n === 3 ? "Тіркелуді аяқтау" : "Келесі қадам";
+    $("done").hidden = true; $("actions").hidden = false; $("progress").hidden = false;
+    var top = $("form").getBoundingClientRect().top + window.scrollY - 110; window.scrollTo({ top: Math.max(0, top), behavior: "smooth" });
+  }
+  function checked(name) { return $$('input[name="' + name + '"]').filter(function (r) { return r.checked; }).map(function (r) { return r.value; }); }
+  function validateStep(n) {
+    var box = $$('.stepbox[data-step="' + n + '"]')[0], ok = true, first = null;
+    $$("[data-rule]", box).forEach(function (el) {
+      var f = el.getAttribute("data-for");
+      if (f && ((f === "own") !== (modeVal() === "own"))) return;
+      touched[el.id] = 1;
+      if (!validateEl(el)) { ok = false; if (!first) first = el; }
+    });
+    if (n === 2 && modeVal() === "new" && !checked("model").length) { setErr("model", "Модельді таңдаңыз"); ok = false; } else if (n === 2) setErr("model", "");
+    if (n === 3) {
+      if (!checked("types").length) { setErr("types", "Кемінде бір өнім түрін таңдаңыз"); ok = false; } else setErr("types", "");
+      if (!checked("channels").length) { setErr("channels", "Кемінде бір арнаны таңдаңыз"); ok = false; } else setErr("channels", "");
+      if (!$("agree").checked) { setErr("agree", "Келісім қажет"); ok = false; } else setErr("agree", "");
+    }
+    if (first) first.focus();
+    return ok;
+  }
+  $("next").addEventListener("click", function () {
+    if (!validateStep(step)) return;
+    if (step < 3) showStep(step + 1); else finish();
+  });
+  $("back").addEventListener("click", function () { showStep(step - 1); });
+  $("form").addEventListener("submit", function (e) { e.preventDefault(); });
+  function enterSignup() {
+    syncMode();
+    if (pickModel) {
+      $$('input[name="mode"]').forEach(function (r) { r.checked = r.value === "new"; }); syncMode();
+      $$('input[name="model"]').forEach(function (r) { r.checked = r.value === pickModel; });
+    }
+    if (!$("done").hidden) return;
+    var u = loadUser();
+    if (u && step === 1 && !$("fn").value) { $("done").hidden = true; }
+  }
+  function finish() {
+    var own = modeVal() === "own";
+    var u = {
+      fn: $("fn").value.trim(), ln: $("ln").value.trim(), email: $("email").value.trim(), phone: "+7 " + $("phone").value.trim(), city: $("city").value,
+      mode: own ? "own" : "new",
+      fridge: own ? { brand: $("brand").value, mname: $("mname").value.trim(), year: $("year").value, vol: $("vol").value, ftype: $("ftype").value } : { model: checked("model")[0], color: checked("color")[0] },
+      people: +$("people").value, room: +$("room-s").value, doors: +$("doors-s").value,
+      types: checked("types"), channels: checked("channels"), auto: $("auto").checked
+    };
+    sset("salqyn-user", JSON.stringify(u));
+    refreshAuth();
+    $$(".stepbox[data-step]").forEach(function (b) { b.hidden = true; });
+    $("progress").hidden = true; $("actions").hidden = true; $("done").hidden = false;
+    $("done-text").textContent = u.fn + ", тоңазытқышыңыз профильге қосылды: " + fridgeName(u) + ". Енді AI панельде ұсынылған температураны көре аласыз.";
+    pickModel = "";
+  }
+
+  /* ---------- account ---------- */
+  function loadUser() { try { var s = sget("salqyn-user"); return s ? JSON.parse(s) : null; } catch (e) { return null; } }
+  function modelOf(id) { return MODELS.filter(function (m) { return m.id === id; })[0]; }
+  function fridgeName(u) {
+    if (u.mode === "new") { var m = modelOf(u.fridge.model); return m ? m.name + ", " + u.fridge.color : "Салқын AI"; }
+    return u.fridge.brand + (u.fridge.mname ? " " + u.fridge.mname : "") + ", " + u.fridge.vol + " л";
+  }
+  function refreshAuth() {
+    var b = $("auth-btn"), u = loadUser();
+    if (u) { b.textContent = u.fn; b.setAttribute("href", "#account"); } else { b.textContent = "Тіркелу"; b.setAttribute("href", "#signup"); }
+  }
+  function renderAccount() {
+    var u = loadUser(), root = $("account-root");
+    if (!u) { root.innerHTML = '<div class="empty"><h2>Кабинет бос</h2><p style="color:var(--muted)">Алдымен тіркеліп, тоңазытқышыңызды қосыңыз.</p><a class="btn primary" href="#signup">Тіркелу</a></div>'; return; }
+    var map = { dairy: "milk", meat: "chicken", fish: "fish", veg: "veg", fruit: "apple", cooked: "meal" };
+    var items = BASE.filter(function (p) { return u.types.some(function (t) { return map[t] === p.id; }); }).map(function (p) { return Object.assign({}, p); });
+    var opt = optimizeC(items, u.room, u.doors), sv = Math.round(100 - energyC(opt.s, u.room));
+    var m = u.mode === "new" ? modelOf(u.fridge.model) : null;
+    var rows = [["Қала", u.city], ["Email", u.email], ["Телефон", u.phone], ["Отбасы мүшесі", u.people], ["Есік ашу, тәулігіне", u.doors], ["Бөлме температурасы", u.room + " °C"], ["Хабарлама", u.channels.map(function (c) { return CHANS.filter(function (x) { return x[0] === c; })[0][1]; }).join(", ")], ["Автоматты режим", u.auto ? "қосулы" : "өшірулі"]];
+    if (u.mode === "own") rows.unshift(["Тоңазытқыш", fridgeName(u) + ", " + u.fridge.year + " ж., " + u.fridge.ftype]);
+    var typeNames = u.types.map(function (t) { return TYPES.filter(function (x) { return x[0] === t; })[0][1]; });
+    root.innerHTML =
+      '<div class="sec-head"><div class="avatar" aria-hidden="true">' + esc(u.fn.charAt(0).toUpperCase()) + '</div><h1 style="font-size:clamp(1.9rem,4.5vw,2.8rem)">Сәлем, ' + esc(u.fn) + '</h1><p>Міне, сіздің тоңазытқышыңыз бен AI ұсынысы.</p></div>' +
+      '<div class="kpis"><div class="kpi main"><span>AI ұсынған температура</span><b>' + f1(opt.s) + ' °C</b></div><div class="kpi"><span>Электр үнемі (2 °C-қа қарағанда)</span><b>' + (sv >= 0 ? "" : "−") + Math.abs(sv) + ' %</b></div><div class="kpi"><span>Өнім түрлері</span><b>' + u.types.length + '</b></div><div class="kpi"><span>Тез пайдалану керек</span><b>' + opt.urgent.length + '</b></div></div>' +
+      '<div class="acc"><div class="card"><div class="pic" style="background:linear-gradient(160deg,var(--brand-soft),var(--surface2));border-radius:16px;padding:16px;display:grid;place-items:center;height:300px">' + fridge({ variant: m ? m.v : "home", color: u.mode === "new" ? u.fridge.color : "Күміс" }).replace('class="fr"', 'class="fr" style="height:100%;width:auto"') + '</div><h3 style="margin-top:16px">' + esc(fridgeName(u)) + '</h3><p style="color:var(--muted);font-size:.95rem;margin-top:4px">' + (m ? m.l + " л · энергия класы " + m.cls + " · " + m.sens + " сенсор" : "Қолданыстағы тоңазытқыш") + '</p></div>' +
+      '<div class="card"><h3>Профиль</h3><dl class="dl">' + rows.map(function (r) { return "<dt>" + r[0] + "</dt><dd>" + esc(r[1]) + "</dd>"; }).join("") + '<dt>Өнімдер</dt><dd>' + esc(typeNames.join(", ")) + '</dd></dl>' +
+      '<div class="hero-cta"><a class="btn primary sm" href="#panel">AI панельді ашу</a><button class="btn ghost sm" type="button" id="logout">Шығу</button></div></div></div>';
+    $("logout").addEventListener("click", function () { sdel("salqyn-user"); refreshAuth(); renderAccount(); });
+  }
+
+  $("theme-btn").addEventListener("click", function () {
+    var r = document.documentElement, dark = r.getAttribute("data-theme") === "dark" || (!r.getAttribute("data-theme") && window.matchMedia("(prefers-color-scheme: dark)").matches);
+    r.setAttribute("data-theme", dark ? "light" : "dark");
+  });
+
+  refreshAuth();
+  buildRows(); updatePanel();
+  route();
+  observe();
+})();
+</script>
+
+</body>
+</html>
